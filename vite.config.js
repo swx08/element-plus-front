@@ -18,9 +18,8 @@ export default defineConfig({
         //目标代理服务器地址：部署时将localhost改成自己服务器的地址即可
         target: "http://localhost:9800",
         changeOrigin: true, //是否设置同源，输入是的
-        pathRewrite: {
-          "^/api": "", //选择忽略拦截器里面的内容
-        },
+        //重写路径
+        rewrite: (path) => path.replace(/^\/api/, "")
       },
     },
   },
