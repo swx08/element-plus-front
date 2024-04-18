@@ -10,7 +10,7 @@
       :closable="item.name !== 'home'"
       @click="changRouter(item)"
       style="margin: 5px"
-      @close="handleClose(index)"
+      @close="handleClose(item, index)"
     >
       {{ item.label }}
     </el-tag>
@@ -34,8 +34,18 @@ const changRouter = (item) => {
 };
 
 //移除面包屑逻辑
-const handleClose = (index) => {
-  breadcrumbStore.tagList.splice(index, 1);
+const handleClose = (item, index) => {
+  let length = tags.value.length - 1;
+  //移除pina中的面包屑
+  breadcrumbStore.clearTags(item);
+  if (item.name !== route.name) {
+    return;
+  }
+  if (index === length) {
+    router.push({ name: tags.value[index - 1].name });
+  } else {
+    router.push({ name: tags.value[index].name });
+  }
 };
 </script>
 <style scoped>

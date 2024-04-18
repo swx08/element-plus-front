@@ -15,7 +15,6 @@ export const useBreadcrumbStore = defineStore("breadcrumb", () => {
   ]);
 
   const setBreadcrumb = (newBreadcrumb) => {
-    console.log(newBreadcrumb);
     if (newBreadcrumb.name === "home") {
       breadcrumb.value = null;
     } else {
@@ -28,9 +27,16 @@ export const useBreadcrumbStore = defineStore("breadcrumb", () => {
     }
   };
 
+  const clearTags = (newTags) => {
+    //删除tagList中指定name的元素
+    let result = tagList.value.findIndex((item) => item.name === newTags.name);
+    tagList.value.splice(result,1);
+  };
+
   return {
     tagList,
     breadcrumb,
     setBreadcrumb,
+    clearTags,
   };
 });
