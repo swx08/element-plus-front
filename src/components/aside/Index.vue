@@ -1,7 +1,6 @@
 <template>
   <el-aside :width="collapseStore.collapse ? '64px' : '200px'">
     <el-menu
-      default-active="2"
       class="el-menu-vertical"
       background-color="linear-gradient(to right, #141e30, #243b55)"
       text-color="#fff"
@@ -9,6 +8,15 @@
       :collapse="collapseStore.collapse"
       :collapse-transition="false"
     >
+      <div class="logo">
+        <el-space :size="5">
+          <el-avatar
+            src="https://ice.frostsky.com/2024/04/18/7f1f5acf8f45032e26fb73f6db9f2e24.jpeg"
+          ></el-avatar>
+          <h3 v-if="!collapseStore.collapse">后台管理系统</h3>
+        </el-space>
+      </div>
+
       <!-- 一级菜单 -->
       <el-menu-item
         :index="item.path"
@@ -53,8 +61,10 @@ import { ref, onMounted } from "vue";
 import { Location, Setting } from "@element-plus/icons-vue";
 import router from "@/router/index.js";
 import { useCollapseStore } from "@/stores/collapse.js";
+import { useBreadcrumbStore } from "@/stores/breadcrumb.js";
 
 const collapseStore = useCollapseStore();
+const breadcrumbStore = useBreadcrumbStore();
 const menuList = [
   {
     path: "home",
@@ -105,13 +115,14 @@ const hasChildren = () => {
 //路由跳转
 const changeRouter = (item) => {
   router.push(item.path);
+  breadcrumbStore.setBreadcrumb(item);
 };
 </script>
 
 
-
+<!-- 样式 -->
 <style lang="less" scoped>
-.el-aside{
+.el-aside {
   height: 100vh;
 }
 
@@ -121,7 +132,7 @@ const changeRouter = (item) => {
   background-image: linear-gradient(to right, #141e30, #243b55);
 }
 
-:deep(.el-menu-item:hover){
+:deep(.el-menu-item:hover) {
   background: #1c88cf !important;
   color: #fff !important;
 }
@@ -139,7 +150,21 @@ const changeRouter = (item) => {
 }
 
 .icons {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
+}
+
+.logo {
+  height: 45px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0 10px 0;
+}
+
+h3{
+  font-family: '华文楷体';
+  color: #fff;
 }
 </style>

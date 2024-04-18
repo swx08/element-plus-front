@@ -4,6 +4,7 @@
       <Aside />
       <el-container class="r-container">
         <Header />
+        <CommonTag />
         <Main />
       </el-container>
     </el-container>
@@ -16,10 +17,11 @@ import Header from "@/components/header/Index.vue";
 import Aside from "@/components/aside/Index.vue";
 import Main from "@/components/main/Index.vue";
 import Footer from "@/components/footer/Index.vue";
+import CommonTag from "@/components/common/tags/Index.vue"
 import { ref, onMounted } from "vue";
 </script>
 <style scoped lang="less">
-.el-container{
+.el-container {
   flex-wrap: wrap;
 }
 
