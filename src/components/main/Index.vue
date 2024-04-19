@@ -13,9 +13,8 @@ const breadcrumbStore = useBreadcrumbStore();
 
 
 <style scoped>
-.el-main{
-  padding: 0;
+.el-main {
+  padding: 20px;
   margin: 0;
-  background-color: #ddd;
 }
 </style>

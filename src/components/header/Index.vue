@@ -18,7 +18,10 @@
       </div>
 
       <div>
-        <el-breadcrumb separator="/">
+        <el-breadcrumb
+          separator="/"
+          style="font-family: '微软雅黑体'; font-size: 14px"
+        >
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item v-if="current" :to="current.path">{{
             current.label
@@ -102,5 +105,10 @@ const current = computed(() => {
   margin-right: 10px;
   width: 23px;
   height: 23px;
+}
+
+.font_common {
+  font-family: "微软雅黑";
+  font-size: 14px;
 }
 </style>

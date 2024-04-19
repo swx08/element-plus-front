@@ -4,13 +4,14 @@
   <div class="tags">
     <el-tag
       v-for="(item, index) in tags"
-      :effect="route.name === item.name ? 'dark' : 'light'"
-      size="large"
       :key="index"
+      size="large"
+      :color="route.name === item.name ? '#d9ecff' : '#fff'"
       :closable="item.name !== 'home'"
       @click="changRouter(item)"
-      style="margin: 5px"
+      :style="{color: route.name === item.name ? 'rgb(77, 112, 255)' : ''}"
       @close="handleClose(item, index)"
+      class="el_tags"
     >
       {{ item.label }}
     </el-tag>
@@ -50,10 +51,18 @@ const handleClose = (item, index) => {
 </script>
 <style scoped>
 .tags {
-  height: 50px;
+  height: 32.2px;
   width: 100%;
-  background-color: #ddd;
+  background-color: #fff;
   display: flex;
-  padding: 5px;
+}
+
+.el_tags {
+  font-family: "微软雅黑体";
+  font-size: 14px;
+}
+
+:deep(.el-tag){
+  border-radius: 0;
 }
 </style>

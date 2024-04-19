@@ -4,6 +4,7 @@
       <Aside />
       <el-container class="r-container">
         <Header />
+        <el-divider />
         <CommonTag />
         <Main />
       </el-container>
@@ -30,5 +31,13 @@ import { ref, onMounted } from "vue";
   .el-container {
     height: 100%;
   }
+}
+
+.r-container{
+  height: 100%;
+}
+
+:deep(.el-divider--horizontal){
+  margin: 0;
 }
 </style>

@@ -10,7 +10,5 @@ import { ref } from "vue";
 </script>
 
 <style scoped lang="less">
-.common{
-  padding: 20px;
-}
+
 </style>
