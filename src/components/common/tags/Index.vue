@@ -1,5 +1,4 @@
-<!-- 封装一个面包屑展示组件 -->
-
+<!-- 封装面包屑展示组件 -->
 <template>
   <div class="tags">
     <el-tag
@@ -7,13 +6,13 @@
       :key="index"
       size="large"
       :color="route.name === item.name ? '#d9ecff' : '#fff'"
-      :closable="item.name !== 'home'"
+      :closable="item.name !== 'Home'"
       @click="changRouter(item)"
       :style="{color: route.name === item.name ? 'rgb(77, 112, 255)' : ''}"
       @close="handleClose(item, index)"
       class="el_tags"
     >
-      {{ item.label }}
+      {{ item.meta.title }}
     </el-tag>
   </div>
 </template>

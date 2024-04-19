@@ -9,13 +9,15 @@ export const useBreadcrumbStore = defineStore("breadcrumb", () => {
   const tagList = ref([
     {
       path: "home",
-      name: "home",
-      label: "首页",
+      name: "Home",
+      meta: {
+        title: '首页'
+      }
     },
   ]);
 
   const setBreadcrumb = (newBreadcrumb) => {
-    if (newBreadcrumb.name === "home") {
+    if (newBreadcrumb.name === "Home") {
       breadcrumb.value = null;
     } else {
       breadcrumb.value = newBreadcrumb;

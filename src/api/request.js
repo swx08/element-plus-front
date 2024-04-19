@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const requests = axios.create({
-	baseURL:"/api",
+	baseURL: import.meat.env.VUE_APP_BASE_API,
     timeout:5000,
 });
 
