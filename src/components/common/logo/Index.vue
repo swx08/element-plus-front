@@ -2,11 +2,12 @@
   <div
     class="logo"
     v-if="!setting.logoHidden"
+    :style="{backgroundColor: themeStore.bgColor}"
     :class="{ collapse: collapseStore.collapse ? true : false }"
   >
     <el-space :size="10">
       <el-avatar :src="setting.logo"></el-avatar>
-      <span class="logo_title" v-if="!collapseStore.collapse">{{
+      <span class="logo_title" :style="{color: themeStore.fontColor}" v-if="!collapseStore.collapse">{{
         setting.title
       }}</span>
     </el-space>
@@ -17,7 +18,10 @@
 import { ref, onMounted } from "vue";
 import setting from "@/setting.js";
 import { useCollapseStore } from "@/stores/models/collapse/collapse.js";
+import { useThemeStore } from "@/stores/models/theme/theme.js";
+
 const collapseStore = useCollapseStore();
+const themeStore = useThemeStore();
 </script>
 
 
@@ -28,7 +32,6 @@ const collapseStore = useCollapseStore();
   justify-content: center;
   align-items: center;
   height: $base-menu-logo-height;
-  background-color: $base-logo-background;
 
   // 左侧菜单收缩样式
   &.collapse {
@@ -37,7 +40,6 @@ const collapseStore = useCollapseStore();
 
   .logo_title {
     font-family: "微软雅黑体";
-    color: #fff;
     font-size: $base-logo-title-size;
   }
 }

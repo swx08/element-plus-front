@@ -1,5 +1,5 @@
 <template>
-  <el-main>
+  <el-main :style="{background: themeStore.isDark ? '' : 'rgb(245,245,245)'}">
     <router-view v-slot="{ Component }">
       <transition name="fade">
         <component :is="Component" v-if="flag" />
@@ -11,7 +11,9 @@
 <script setup>
 import { ref, watch, nextTick } from "vue";
 import { useRefreshStore } from "@/stores/models/refresh/refresh.js";
+import { useThemeStore } from "@/stores/models/theme/theme.js";
 
+const themeStore = useThemeStore();
 const useRefresh = useRefreshStore();
 //控制当前组件是否销毁重建
 const flag = ref(true);

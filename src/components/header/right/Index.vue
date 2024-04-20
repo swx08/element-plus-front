@@ -1,9 +1,20 @@
 <template>
   <!-- 右侧 -->
   <div class="r-content">
-    <el-button @click="doRefresh" circle icon="Refresh"></el-button>
-    <el-button @click="changeScreen" circle icon="FullScreen"></el-button>
-    <el-button @click="changeTheme" style="margin-right: 15px" circle icon="Setting"></el-button>
+    <el-tooltip content="刷新" placement="bottom">
+      <el-button @click="doRefresh" circle icon="Refresh"></el-button>
+    </el-tooltip>
+    <el-tooltip content="全屏" placement="bottom">
+      <el-button @click="changeScreen" circle icon="FullScreen"></el-button>
+    </el-tooltip>
+    <el-tooltip content="设置" placement="bottom">
+      <el-button
+        @click="changeTheme"
+        style="margin-right: 15px"
+        circle
+        icon="Setting"
+      ></el-button>
+    </el-tooltip>
 
     <el-dropdown>
       <el-space :size="8">
@@ -26,7 +37,6 @@
       </template>
     </el-dropdown>
   </div>
-
 </template>
 
 <script setup>
@@ -68,7 +78,7 @@ const doLogoOut = () => {
 const themeStore = useThemeStore();
 const changeTheme = () => {
   themeStore.theme = !themeStore.theme;
-}
+};
 </script>
 
 

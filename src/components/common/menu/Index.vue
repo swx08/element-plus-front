@@ -1,8 +1,8 @@
 <template>
   <el-menu
     class="el-menu-vertical"
-    text-color="#fff"
-    background-color="#303133"
+    :text-color="themeStore.fontColor"
+    :background-color="themeStore.bgColor"
     active-text-color="#409EFF"
     :collapse="collapseStore.collapse"
     :collapse-transition="false"
@@ -65,9 +65,10 @@ import { computed, ref } from "vue";
 import router from "@/router/index.js";
 import { useCollapseStore } from "@/stores/models/collapse/collapse.js";
 import { useBreadcrumbStore } from "@/stores/models/breadcrumb/breadcrumb.js";
+import { useThemeStore } from "@/stores/models/theme/theme.js";
 
+const themeStore = useThemeStore();
 const breadcrumbStore = useBreadcrumbStore();
-
 //接收父组件传进来的路由数据
 const props = defineProps({
   menuList: [],
@@ -102,15 +103,14 @@ export default {
 .el-menu-vertical {
   border-right: none;
   height: 100vh;
-  background: $base-menu-side-background;
 }
 
 :deep(.el-menu-item:hover) {
-  background: #1c88cf !important;
+  background: #79bbff !important;
   color: #fff !important;
 }
 :deep(.el-submenu__title:hover) {
-  background: #1c88cf !important;
+  background: #79bbff !important;
   color: #fff !important;
 }
 :deep(.el-menu-item.is-active) {
