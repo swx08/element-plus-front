@@ -15,7 +15,7 @@ const routes = [
   {
     path: "/",
     component: () => import("@/components/layout/Index.vue"),
-    redirect: "/login",
+    redirect: "/home",
     meta: {
       title: "layout",
       hidden: false,

@@ -62,7 +62,9 @@ import { ref, onMounted } from "vue";
 import { User, Lock } from "@element-plus/icons-vue";
 import router from "@/router/index.js";
 import { ElNotification } from "element-plus";
+import { useTokenStore } from "@/stores/models/token/token.js";
 
+const tokenStore = useTokenStore();
 const loading = ref(false);
 const loginForm = ref();
 const user = ref({
@@ -86,8 +88,10 @@ const submitForm = () => {
           message: "欢迎回来",
           type: "success",
         });
+        //假token设置
+        tokenStore.token = 'sdjfkldjf561548fdsf5465';
         router.push("/home");
-      }, 2000);
+      }, 1000);
       // doLogin(user.value).then((res) => {
       //   if (res.code === 200) {
       //     authStore.setAuthorization(res.data);

@@ -1,38 +1,32 @@
 <template>
-  <el-header>
-    <!-- 左侧 -->
-    <Left />
-
-    <!-- 右侧 -->
-    <Right />
-  </el-header>
+  <div>
+    <div class="top">
+      <!-- 左侧 -->
+      <Left />
+      <!-- 右侧 -->
+      <Right />
+    </div>
+    <el-divider></el-divider>
+    <RouterTags />
+    <!-- 主题设置弹出框 -->
+    <Drawer />
+  </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
+import RouterTags from "@/components/common/tags/Index.vue";
 import Left from "@/components/header/left/Index.vue";
 import Right from "@/components/header/right/Index.vue";
+import Drawer from "@/components/header/drawer/Index.vue";
 </script>
 
 
 <style scoped lang="scss">
-.el-header {
+.top {
+  height: $base-top-header-height;
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  height: 60px;
-
-  .l-content {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding-left: 10px;
-  }
-
-  .r-content {
-    display: flex;
-    align-items: center;
-  }
+  align-items: center;
 }
 </style>

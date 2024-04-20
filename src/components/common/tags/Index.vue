@@ -5,10 +5,9 @@
       v-for="(item, index) in tags"
       :key="index"
       size="large"
-      :color="route.name === item.name ? '#d9ecff' : '#fff'"
+      :effect="route.name === item.name ? 'dark' : 'light'"
       :closable="item.name !== 'Home'"
       @click="changRouter(item)"
-      :style="{color: route.name === item.name ? 'rgb(77, 112, 255)' : ''}"
       @close="handleClose(item, index)"
       class="el_tags"
     >
@@ -19,7 +18,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useBreadcrumbStore } from "@/stores/breadcrumb.js";
+import { useBreadcrumbStore } from "@/stores/models/breadcrumb/breadcrumb.js";
 import { useRoute } from "vue-router";
 import router from "@/router/index.js";
 
@@ -48,12 +47,9 @@ const handleClose = (item, index) => {
   }
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 .tags {
-  height: 32.2px;
-  width: 100%;
-  background-color: #fff;
-  display: flex;
+  height: $base-bottom-header-height;
 }
 
 .el_tags {

@@ -19,7 +19,7 @@
     <div>
       <el-breadcrumb
         separator="/"
-        style="font-family: '微软雅黑体'; font-size: 14px;margin-left: 10px"
+        style="font-family: '微软雅黑体'; font-size: 14px; margin-left: 10px"
       >
         <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item v-if="current" :to="current.path">{{
@@ -32,8 +32,8 @@
 
 <script setup>
 import { computed } from "vue";
-import { useCollapseStore } from "@/stores/collapse.js";
-import { useBreadcrumbStore } from "@/stores/breadcrumb.js";
+import { useCollapseStore } from "@/stores/models/collapse/collapse.js";
+import { useBreadcrumbStore } from "@/stores/models/breadcrumb/breadcrumb.js";
 
 const breadcrumbStore = useBreadcrumbStore();
 const collapseStore = useCollapseStore();
@@ -47,11 +47,10 @@ const current = computed(() => {
 </script>
 <style scoped lang="scss">
 .l-content {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding-left: 10px;
-  }
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+}
 
 .font_common {
   font-family: "微软雅黑";

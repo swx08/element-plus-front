@@ -5,10 +5,15 @@ $base-menu-side-width: 200px;
 //左侧折叠后的宽度
 $base-menu-min-side-width: 64px;
 // 左侧菜单背景颜色
-$base-menu-side-background: linear-gradient(to right, #141e30, #243b55);
+// $base-menu-side-background: linear-gradient(to right, #141e30, #243b55);
+$base-menu-side-background: #545c64;
 
 // 顶部导航高度
 $base-menu-header-height: 94px;
+//顶部上半部分高度
+$base-top-header-height: 60px;
+//顶部下半部分高度
+$base-bottom-header-height: 32.2px;
 // 顶部背景颜色
 $base-menu-header-background: #fff;
 
@@ -20,4 +25,5 @@ $base-menu-logo-height: 60px;
 // 左侧Logo文字大小
 $base-logo-title-size: 18px;
 // 左侧Logo背景
-$base-logo-background: linear-gradient(to right, #141e30, #243b55);
+// $base-logo-background: linear-gradient(to right, #141e30, #243b55);
+$base-logo-background: #545c64;

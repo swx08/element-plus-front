@@ -63,8 +63,8 @@
 <script setup>
 import { computed, ref } from "vue";
 import router from "@/router/index.js";
-import { useCollapseStore } from "@/stores/collapse.js";
-import { useBreadcrumbStore } from "@/stores/breadcrumb.js";
+import { useCollapseStore } from "@/stores/models/collapse/collapse.js";
+import { useBreadcrumbStore } from "@/stores/models/breadcrumb/breadcrumb.js";
 
 const breadcrumbStore = useBreadcrumbStore();
 
@@ -99,10 +99,6 @@ export default {
 
 <!-- 样式 -->
 <style lang="scss" scoped>
-.el-aside {
-  height: 100vh;
-}
-
 .el-menu-vertical {
   border-right: none;
   height: 100vh;

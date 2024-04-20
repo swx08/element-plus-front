@@ -1,14 +1,9 @@
 <template>
   <!-- 右侧 -->
   <div class="r-content">
-    <el-button @click="doRefresh" type="primary" circle icon="Refresh"></el-button>
-    <el-button @click="changeScreen"  type="primary" circle icon="FullScreen"></el-button>
-    <el-button
-      style="margin-right: 15px"
-      type="primary"
-      circle
-      icon="Setting"
-    ></el-button>
+    <el-button @click="doRefresh" circle icon="Refresh"></el-button>
+    <el-button @click="changeScreen" circle icon="FullScreen"></el-button>
+    <el-button @click="changeTheme" style="margin-right: 15px" circle icon="Setting"></el-button>
 
     <el-dropdown>
       <el-space :size="8">
@@ -26,44 +21,62 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item>个人中心</el-dropdown-item>
-          <el-dropdown-item>退出登录</el-dropdown-item>
+          <el-dropdown-item @click="doLogoOut">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
   </div>
+
 </template>
 
 <script setup>
-import { useRefreshStore } from '@/stores/refresh.js';
-import screenfull from 'screenfull';
-import { ElMessage } from 'element-plus'
+import { ref } from "vue";
+import { useRefreshStore } from "@/stores/models/refresh/refresh.js";
+import { useThemeStore } from "@/stores/models/theme/theme.js";
+import screenfull from "screenfull";
+import { ElMessage } from "element-plus";
+import { useTokenStore } from "@/stores/models/token/token.js";
+import router from "@/router/index";
 
+const tokenStore = useTokenStore();
 const useRefresh = useRefreshStore();
 
 //刷新
 const doRefresh = () => {
   useRefresh.refresh = !useRefresh.refresh;
-}
+};
 
 //全屏
 const changeScreen = () => {
   if (screenfull.isEnabled) {
-		screenfull.toggle();
-	} else {
+    screenfull.toggle();
+  } else {
     ElMessage({
-      message: '您的浏览器不支持全屏！',
-      type: 'warning'
-    })
-	}
+      message: "您的浏览器不支持全屏！",
+      type: "warning",
+    });
+  }
+};
+
+//退出登录
+const doLogoOut = () => {
+  tokenStore.token = "";
+  router.push({ name: "Login" });
+};
+
+//主题设置相关数据
+const themeStore = useThemeStore();
+const changeTheme = () => {
+  themeStore.theme = !themeStore.theme;
 }
 </script>
 
 
 <style scoped lang="scss">
 .r-content {
-    display: flex;
-    align-items: center;
-  }
+  display: flex;
+  align-items: center;
+}
 
 .font_common {
   font-family: "微软雅黑";
