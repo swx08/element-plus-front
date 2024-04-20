@@ -1,7 +1,9 @@
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
+//引入path路径，用于路径别名
 import path from "path";
 
+// 导出 Vite 配置
 export default defineConfig(({ command, mode }) => {
   //加载各环境下的配置
   let env = loadEnv(mode, process.cwd());
@@ -27,10 +29,10 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     plugins: [vue()],
+    //scss样式配置：global.scss中的变量可以全局使用
     css: {
       preprocessorOptions: {
         scss: {
-          // 两种方式都可以
           javascriptEnabled: true,
           additionalData: '@import "./src/style/global.scss";',
         },

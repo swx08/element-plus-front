@@ -1,8 +1,11 @@
+<!-- 侧边栏组件 -->
 <template>
   <el-aside :class="{ collapse: collapseStore.collapse ? true : false }">
-    <Logo />
+    <!-- 使用Logo组件 -->
+    <Logo /> 
     <el-scrollbar class="scrollbar">
-      <Meun :menuList="routes" />
+      <!-- 使用Menu组件，传递menuList属性 -->
+      <Meun :menuList="routes" /> 
     </el-scrollbar>
   </el-aside>
 </template>
@@ -11,27 +14,27 @@
 import Logo from "@/components/common/logo/Index.vue";
 import Meun from "@/components/common/menu/Index.vue";
 //引入路由
-import routes from "@/router/routes.js";
-import { useCollapseStore } from "@/stores/models/collapse/collapse.js";
+import routes from "@/router/routes.js"; // 导入路由配置
+import { useCollapseStore } from "@/stores/models/collapse/collapse.js"; // 导入折叠状态管理模块
 
-const collapseStore = useCollapseStore();
+const collapseStore = useCollapseStore(); // 使用折叠状态管理模块
 </script>
 
 <style scoped lang="scss">
 .el-aside {
-  width: $base-menu-side-width;
-  height: 100vh;
+  width: $base-menu-side-width; // 设置侧边栏宽度
+  height: 100vh; // 设置侧边栏高度
   .scrollbar {
-    height: calc(100vh - $base-menu-logo-height);
+    height: calc(100vh - $base-menu-logo-height); // 设置滚动条容器高度
   }
 
   // 左侧菜单收缩样式
   &.collapse {
-    width: $base-menu-min-side-width;
+    width: $base-menu-min-side-width; // 设置折叠状态下侧边栏宽度
   }
 }
 
 .el-menu-vertical {
-  border-right: none;
+  border-right: none; // 设置垂直菜单样式，去掉右边边框
 }
 </style>
