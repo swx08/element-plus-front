@@ -23,7 +23,7 @@ const routes = [
     },
     children: [
       {
-        path: "/home",
+        path: "home",
         name: "Home",
         component: () => import("@/pages/home/Index.vue"),
         meta: {

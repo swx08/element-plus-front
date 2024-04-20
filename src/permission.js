@@ -32,7 +32,7 @@ router.beforeEach((to, from, next) => {
     if (to.path === "/login") {
       next();
     } else {
-      next({ path: "/login", query: { redirect: to.path } });
+      next({ path: "/login"});
     }
   }
 });

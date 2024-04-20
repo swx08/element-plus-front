@@ -6,7 +6,7 @@
     :class="{ collapse: collapseStore.collapse ? true : false }"
   >
     <el-space :size="10">
-      <el-avatar :src="setting.logo"></el-avatar>
+      <el-avatar :size="45" :src="setting.logo"></el-avatar>
       <span class="logo_title" :style="{color: themeStore.fontColor}" v-if="!collapseStore.collapse">{{
         setting.title
       }}</span>

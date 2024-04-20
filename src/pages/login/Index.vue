@@ -83,14 +83,14 @@ const submitForm = () => {
       loading.value = true;
       setTimeout(() => {
         loading.value = false;
+        //假token设置
+        tokenStore.token = 'sdjfkldjf561548fdsf5465';
+        router.push({path: '/home'});
         ElNotification({
           title: "登录成功",
           message: "欢迎回来",
           type: "success",
         });
-        //假token设置
-        tokenStore.token = 'sdjfkldjf561548fdsf5465';
-        router.push("/home");
       }, 1000);
       // doLogin(user.value).then((res) => {
       //   if (res.code === 200) {

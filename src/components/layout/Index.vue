@@ -18,7 +18,6 @@
 import Aside from "@/components/aside/Index.vue";
 import Main from "@/components/main/Index.vue";
 import Header from "@/components/header/Index.vue";
-
 </script>
 
 

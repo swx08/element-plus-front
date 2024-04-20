@@ -37,15 +37,18 @@ watch(
 .el-main{
   width: auto;
 }
-.fade-enter-from {
-  opacity: 0;
-}
 
 .fade-enter-active {
-  transition: all 0.5s;
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: scale(0.9);
 }
 
 .fade-enter-to {
   opacity: 1;
+  transform: scale(1);
 }
 </style>

@@ -1,6 +1,17 @@
 <template>
   <!-- 右侧 -->
   <div class="r-content">
+    <el-tooltip content="gite" placement="bottom">
+      <el-link :underline="false" target="_blank" href="https://gitee.com/six-key/vite-vue3">
+        <template #default>
+          <el-image
+            src="https://s2.loli.net/2024/04/20/G6rfcxOzjmuvnTH.png"
+            fit="contain"
+            style="height: 28px; width: 28px; margin-right: 12px"
+          ></el-image>
+        </template>
+      </el-link>
+    </el-tooltip>
     <el-tooltip content="刷新" placement="bottom">
       <el-button @click="doRefresh" circle icon="Refresh"></el-button>
     </el-tooltip>
