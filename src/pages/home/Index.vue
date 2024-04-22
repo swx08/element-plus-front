@@ -7,6 +7,7 @@
     }"
   >
     <el-button>首页</el-button>
+    <el-button type="success">测试</el-button>
 
     <div>
       <el-pagination
@@ -45,6 +46,7 @@
 <script setup>
 import { ref } from "vue";
 import { useThemeStore } from "@/stores/models/theme/theme.js";
+import useUserStore from "@/stores/models/user/user.js";
 
 const themeStore = useThemeStore();
 </script>

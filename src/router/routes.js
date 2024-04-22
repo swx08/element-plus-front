@@ -1,29 +1,20 @@
-import component from "element-plus/es/components/tree-select/src/tree-select-option.mjs";
-
 // 路由配置
-const routes = [
-  {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/pages/login/Index.vue"),
-    meta: {
-      title: "登录",
-      hidden: true,
-      icon: "UploadFilled",
-    },
-  },
+
+//常量路由
+export const constantRoutes = [
   {
     path: "/",
+    name: "layout",
     component: () => import("@/components/layout/Index.vue"),
     redirect: "/home",
     meta: {
-      title: "layout",
+      title: "",
       hidden: false,
-      icon: "Odometer",
+      icon: "",
     },
     children: [
       {
-        path: "home",
+        path: "/home",
         name: "Home",
         component: () => import("@/pages/home/Index.vue"),
         meta: {
@@ -35,17 +26,42 @@ const routes = [
     ],
   },
   {
+    path: "/login",
+    name: "Login",
+    component: () => import("@/pages/login/Index.vue"),
+    meta: {
+      title: "登录",
+      hidden: true,
+      icon: "UploadFilled",
+    },
+  },
+  {
+    path: "/404",
+    name: "404",
+    component: () => import("@/pages/404/Index.vue"),
+    meta: {
+      title: "404",
+      hidden: true,
+      icon: "UploadFilled",
+    },
+  }
+];
+
+//异步路由(动态路由)
+export const asyncRoutes = [
+  {
     path: "/permission",
-    name: "Layout",
+    name: "Permission",
     component: () => import("@/components/layout/Index.vue"),
     meta: {
       title: "权限管理",
       hidden: false,
       icon: "Lock",
     },
+    redirect: "/permission/user",
     children: [
       {
-        path: "/user",
+        path: "/permission/user",
         name: "User",
         component: () => import("@/pages/permission/user/Index.vue"),
         meta: {
@@ -55,7 +71,7 @@ const routes = [
         },
       },
       {
-        path: "/role",
+        path: "/permission/role",
         name: "Role",
         component: () => import("@/pages/permission/role/Index.vue"),
         meta: {
@@ -65,7 +81,7 @@ const routes = [
         },
       },
       {
-        path: "/menu",
+        path: "/permission/menu",
         name: "Menu",
         component: () => import("@/pages/permission/menu/Index.vue"),
         meta: {
@@ -85,6 +101,7 @@ const routes = [
       hidden: false,
       icon: "Avatar",
     },
+    redirect: "/other/page1",
     children: [
       {
         path: "/other/page1",
@@ -107,17 +124,17 @@ const routes = [
         },
       },
     ],
-  },
-  {
-    path: "/:pathMatch(.*)*",
-    name: "NotFound",
-    component: () => import("@/pages/404/Index.vue"),
-    meta: {
-      title: "404",
-      hidden: true,
-      icon: "",
-    },
-  },
+  }
 ];
 
-export default routes;
+//任意路由
+export const anyRoute = {
+  path: "/:pathMatch(.*)*",
+  redirect: "/404",
+  name: "any",
+  meta: {
+    title: "任意路由",
+    hidden: true,
+    icon: "",
+  },
+};

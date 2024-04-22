@@ -9,15 +9,33 @@ export const useBreadcrumbStore = defineStore("breadcrumb", () => {
   // 使用ref创建响应式的tagList数组，并初始化包含一个对象
   const tagList = ref([
     {
-      path: "home",
+      path: "/home",
       name: "Home",
       meta: {
-        title: '首页'
-      }
+        title: "首页",
+        hidden: false,
+        icon: "Avatar",
+      },
     },
   ]);
 
-  // 设置面包屑
+  //退出时清空数据
+  const removeBreadcrumb = () => {
+    breadcrumb.value = null;
+    tagList.value = [
+      {
+        path: "/home",
+        name: "Home",
+        meta: {
+          title: "首页",
+          hidden: false,
+          icon: "Avatar",
+        },
+      },
+    ];
+  }
+
+  // 设置动态面包屑
   const setBreadcrumb = (newBreadcrumb) => {
     // 如果新面包屑的name为"Home"，则将breadcrumb置为null，否则赋值为newBreadcrumb
     if (newBreadcrumb.name === "Home") {
@@ -47,5 +65,6 @@ export const useBreadcrumbStore = defineStore("breadcrumb", () => {
     breadcrumb,
     setBreadcrumb,
     clearTags,
+    removeBreadcrumb,
   };
 });

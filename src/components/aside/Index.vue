@@ -5,7 +5,7 @@
     <Logo /> 
     <el-scrollbar class="scrollbar">
       <!-- 使用Menu组件，传递menuList属性 -->
-      <Meun :menuList="routes" /> 
+      <Meun :menuList="userStore.menuRoutes" /> 
     </el-scrollbar>
   </el-aside>
 </template>
@@ -13,11 +13,15 @@
 <script setup>
 import Logo from "@/components/common/logo/Index.vue";
 import Meun from "@/components/common/menu/Index.vue";
-//引入路由
-import routes from "@/router/routes.js"; // 导入路由配置
-import { useCollapseStore } from "@/stores/models/collapse/collapse.js"; // 导入折叠状态管理模块
+// 导入折叠状态管理模块
+import { useCollapseStore } from "@/stores/models/collapse/collapse.js"; 
+// 导入常量路由配置
+import useUserStore from "@/stores/models/user/user.js";
 
-const collapseStore = useCollapseStore(); // 使用折叠状态管理模块
+//主要是获取常量路由数据传递给子组件（菜单组件Menu）
+const userStore = useUserStore();
+// 使用折叠状态管理模块
+const collapseStore = useCollapseStore();
 </script>
 
 <style scoped lang="scss">

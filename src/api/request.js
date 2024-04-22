@@ -1,28 +1,54 @@
 //对于axios进行二次封装
 import axios from "axios";
+import { ElMessage } from "element-plus";
+import router from "@/router/index";
+import useUserStore from "@/stores/models/user/user.js";
 
 //配置通用的基础路径和超时时间
 const requests = axios.create({
-	baseURL: import.meat.env.VUE_APP_BASE_API,
-    timeout:5000,
+  baseURL: import.meta.env.VITE_APP_BASE_API,
+  timeout: 5000,
 });
 
 //请求拦截器
-requests.interceptors.request.use((config)=>{
-    //config：配置对象，对象里面有一个属性很重要，headers请求头
-    
-    return config;
-})
+requests.interceptors.request.use((config) => {
+  //config：配置对象，对象里面有一个属性很重要，headers请求头
+  let userStore = useUserStore();
+  if (userStore.token) {
+    config.headers["authorization"] = userStore.token; // 设置请求头
+  }
+  return config;
+});
 
 //响应拦截器
-requests.interceptors.response.use((res)=>{
+requests.interceptors.response.use(
+  (response) => {
     //响应成功的回调
-
-    return res.data;
-},(error)=>{
+    const res = response.data;
+    const code = res.code;
+    if (code !== 200) {
+      ElMessage({
+        showClose: true,
+        message: res.message,
+        center: true,
+        type: "error",
+      });
+    }
+    if (code === 403) {
+      // authorizationStore.removeAuthorization();
+      router.push("/login");
+    }
+    if (code === 1002) {
+      // authorizationStore.removeAuthorization();
+      router.push("/login");
+    }
+    return res;
+  },
+  (error) => {
     //响应失败的回调
-    return Promise.reject(new Error('faile'));
-});
+    return Promise.reject(new Error("faile"));
+  }
+);
 
 //对外暴露
 export default requests;

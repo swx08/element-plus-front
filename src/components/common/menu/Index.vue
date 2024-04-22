@@ -2,10 +2,11 @@
   <el-menu
     class="el-menu-vertical"
     :text-color="themeStore.fontColor"
-    :background-color="themeStore.bgColor"
+    :background-color="themeStore.menuBgColor"
     active-text-color="#409EFF"
     :collapse="collapseStore.collapse"
     :collapse-transition="false"
+    :style="{ background:themeStore.bgColor}"
   >
     <!-- 一级菜单 -->
     <template v-for="(item, index) in noChildren">
@@ -74,19 +75,25 @@ const props = defineProps({
   menuList: [],
 });
 
+//控制侧边栏收缩和展开时的控制
 const collapseStore = useCollapseStore();
 
+//过滤出无子菜单的路由
 const noChildren = () => {
   return props.menuList.filter((item) => !item.children);
 };
 
+//过滤出菜单路由，有子菜单的路由
 const hasChildren = () => {
   return props.menuList.filter((item) => item.children);
 };
 
 //路由跳转
 const changeRouter = (item) => {
+  //点击菜单时路由跳转
   router.push(item.path);
+
+  //点击菜单时获取头部面包屑路由展示数据
   breadcrumbStore.setBreadcrumb(item);
 };
 </script>
@@ -125,5 +132,6 @@ export default {
 .icons {
   width: 16px;
   height: 16px;
+  margin-right: 7px;
 }
 </style>

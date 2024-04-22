@@ -1,16 +1,16 @@
-import { createWebHistory, createRouter } from "vue-router";
 // 从"vue-router"中导入createWebHistory和createRouter方法
+import { createWebHistory, createRouter } from "vue-router";
+// 导入常量路由配置
+import useUserStore from "../stores/models/user/user";
+import pinia from "@/stores";
 
-import routes from "./routes";
-// 从"./routes"中导入路由配置
-
+const userStore = useUserStore(pinia);
 const router = createRouter({
-  history: createWebHistory(),
   // 创建基于HTML5 history模式的history实例
-
-  routes: routes
+  history: createWebHistory(),
   // 设置路由配置
+  routes: userStore.menuRoutes,
 });
 
-export default router;
 // 导出路由
+export default router;

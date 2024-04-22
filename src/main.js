@@ -20,9 +20,12 @@ import "element-plus/theme-chalk/dark/css-vars.css";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 //引入路由鉴权文件
 import './permission';
+//引入自定义指令文件
+import { hasButton } from '@/button/has';
 
 const app = createApp(App);
 const persist = createPersistedState();
+hasButton(app);
 // 注册ElementPlus图标库
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);

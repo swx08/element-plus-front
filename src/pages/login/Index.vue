@@ -58,18 +58,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, renderList } from "vue";
 import { User, Lock } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
+import useUserStore from "@/stores/models/user/user.js";
 import router from "@/router/index.js";
-import { ElNotification } from "element-plus";
-import { useTokenStore } from "@/stores/models/token/token.js";
+import { useRoute } from "vue-router";
 
-const tokenStore = useTokenStore();
+const route = useRoute();
+const userStore = useUserStore();
 const loading = ref(false);
 const loginForm = ref();
 const user = ref({
   username: "admin",
-  password: "admin123",
+  password: "111",
 });
 
 const rules = ref({
@@ -77,27 +79,25 @@ const rules = ref({
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
 });
 
+//登录提交
 const submitForm = () => {
-  loginForm.value.validate((valid) => {
+  loginForm.value.validate(async (valid) => {
     if (valid) {
-      loading.value = true;
-      setTimeout(() => {
-        loading.value = false;
-        //假token设置
-        tokenStore.token = 'sdjfkldjf561548fdsf5465';
-        router.push({path: '/home'});
-        ElNotification({
-          title: "登录成功",
-          message: "欢迎回来",
+      try {
+        //进到这里说明已经登录成功
+        loading.value = true;
+        await userStore.login(user.value);
+        ElMessage({
+          message: "登录成功",
           type: "success",
         });
-      }, 1000);
-      // doLogin(user.value).then((res) => {
-      //   if (res.code === 200) {
-      //     authStore.setAuthorization(res.data);
-      //     router.push("about");
-      //   }
-      // });
+        loading.value = false;
+        //跳转(如果路径中有redirect参数，则跳转到redirect参数，否则跳转到首页)
+        const redirect = route.query.redirect;
+        router.push({ path: redirect || "/" });
+      } catch (error) {
+        loading.value = false;
+      }
     }
   });
 };

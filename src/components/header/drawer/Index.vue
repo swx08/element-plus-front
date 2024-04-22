@@ -61,6 +61,11 @@
             </el-radio-group>
           </el-space>
         </div>
+
+        <!-- 回复默认主题设置 -->
+        <div style="height: 300px; display: flex; align-items: flex-end">
+          <el-button @click="setDefault" type="primary">设置默认主题</el-button>
+        </div>
       </el-space>
     </template>
   </el-drawer>
@@ -109,6 +114,7 @@ const change = () => {
 const changeThemeColor = () => {
   //通知js修改根节点的样式对象的属性与属性值
   let html = document.documentElement;
+  themeStore.menuBgColor = color.value;
   html.style.setProperty("--el-color-primary", color.value);
 };
 
@@ -117,6 +123,11 @@ const radio = ref("");
 const changeSideTheme = (val) => {
   themeStore.changeSideTheme(val);
 };
+
+//设置默认主题
+const setDefault = () => {
+  themeStore.setDefaultTheme();
+}
 </script>
 
 <style scoped lang="scss">
