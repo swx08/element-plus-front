@@ -10,7 +10,7 @@
               text-align: center;
             "
           >
-            后台管理系统
+            {{ setting.title }}
           </h1>
           <div
             style="
@@ -63,9 +63,8 @@ import { User, Lock } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import useUserStore from "@/stores/models/user/user.js";
 import router from "@/router/index.js";
-import { useRoute } from "vue-router";
+import setting from "@/setting.js";
 
-const route = useRoute();
 const userStore = useUserStore();
 const loading = ref(false);
 const loginForm = ref();
@@ -92,9 +91,7 @@ const submitForm = () => {
           type: "success",
         });
         loading.value = false;
-        //跳转(如果路径中有redirect参数，则跳转到redirect参数，否则跳转到首页)
-        const redirect = route.query.redirect;
-        router.push({ path: redirect || "/" });
+        router.push({ path: "/" });
       } catch (error) {
         loading.value = false;
       }

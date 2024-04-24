@@ -19,3 +19,38 @@ export function getUserInfo() {
     method: "GET"
   });
 }
+
+export function findUserList(pageNo,pageSize,username) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/list/${pageNo}/${pageSize}`,
+    method: "GET",
+    params: username,
+  });
+}
+
+export function queryRoles(userId) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/roles/${userId}`,
+    method: "GET",
+  });
+}
+
+export function save(data) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/save`,
+    method: "POST",
+    data: data,
+  });
+}
+
+export function saveRoles(username, data) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/save/roles/${username}`,
+    method: "POST",
+    data: data,
+  });
+}

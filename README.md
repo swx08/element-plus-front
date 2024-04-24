@@ -1,5 +1,17 @@
-# 通用后台管理系统
+---
+icon: pen-to-square
+date: 2024-04-23
+category:
+  - 项目
+tag:
+  - 文档
+  - 项目
+star: true
+sticky: true
+---
 
+
+# 通用后台管理系统
 
 
 ## 一、基础配置
