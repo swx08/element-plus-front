@@ -554,6 +554,194 @@ export default defineConfig(({ command, mode }) => {
 
 
 
+### 8、SVG图标的封装和使用
+
+>**说明：主要使用阿里图标库**
+
+#### 插件安装
+
+```bash
+npm i vite-plugin-svg-icons -D
+```
+
+
+
+#### vite.config.js配置
+
+```js
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+
+plugins: [
+      vue(),
+      createSvgIconsPlugin({
+        // 配置svg图标所在位置
+        iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+        symbolId: "icon-[dir]-[name]",
+      }),
+    ],
+```
+
+
+
+#### main.js引入
+
+```js
+import 'virtual:svg-icons-register'
+```
+
+
+
+**以上就配置完成，紧接着开始在组件中使用**
+
+
+
+#### 使用
+
+**去阿里图标库下载图标的svg代码，然后在项目的src/assets/icons/目录下新建.svg文件即可**
+
+
+
+>**具体使用**
+
+```vue
+<div class="test">
+    <!-- svg图标外层容器节点，需要内部配合use标签使用 -->
+   <svg style="height: 25px; width: 25px">
+            <!-- xlink:href表示使用哪一个图标：注意：属性值务必：#icon-图标名字
+            指定图标：xlink:href----：#icon-图标名字
+            图标颜色：fill----：blue：注意：当fill默认有值时这里设置的不生效
+            -->
+            <use xlink:href="#icon-logo" fill="blue"></use>
+    </svg>
+</div>
+```
+
+
+
+通过以上就可以在项目中使用svg了，问题是不可能每用一次就写这么些代码，接下来就封装为一个**全局的svg组件**吧！
+
+
+
+#### 封装svg组件
+
+>**SvgIcon**
+
+```vue
+<template>
+    <!-- 使用父组件指定的图标大小 -->
+    <svg :style="{width,height}">
+        <!-- 使用父组件指定的图标和图标颜色 -->
+        <use :xlink:href="prefix + name" :fill="color"></use>
+    </svg>
+</template>
+
+<script setup>
+import { ref,onMounted} from 'vue'
+
+//接收父组件传递过来的参数
+defineProps({
+    //xlink:href属性值前缀
+    prefix: {
+        type: String,
+        default: '#icon-'
+    },
+    //svg名字
+    name: String,
+    //颜色
+    color: {
+        type: String,
+        default: ''
+    },
+    height: {
+        type: String,
+        default: '45px'
+    },
+    width: {
+        type: String,
+        default: '45px'
+    },
+})
+</script>
+<style scoped lang='scss'>
+</style>
+```
+
+
+
+>**组件中使用**
+
+```vue
+<template>
+<svg-icon name="logo" color="yellow" width="100px" height="100px"/>
+</template>
+
+<script setup>
+//svg图标
+import SvgIcon from "@/components/common/svg/Index.vue"
+</script>
+```
+
+
+
+#### 注册为全局组件
+
+>**自定义插件的方式来注册全局组件**
+
+##### ①、自定义插件对象并暴露
+
+在项目中新建plugins文件夹，其下新建Index.js文件
+
+```js
+//引入所有需要注册为全局组件的组件
+import SvgIcon from "@/components/common/svg/Index.vue";
+
+//全局对象
+const allGlobalComponent = { SvgIcon };
+
+//对外暴露插件对象
+export default {
+    //务必使用install方法
+    install(app) {
+        //注册项目中的所有全局组件
+        Object.keys(allGlobalComponent).forEach(key => {
+            //注册为全局组件
+            app.component(key, allGlobalComponent[key]);
+        });
+    }
+}
+```
+
+
+
+##### ②、main.js中引入插件
+
+```js
+//引入自定义插件用来注册全局组件
+import globalComponent from "@/plugins";
+
+//安装自定义插件
+app.use(globalComponent);
+```
+
+
+
+##### ③、使用
+
+**直接使用**
+
+```vue
+<template>
+<svg-icon name="logo" color="yellow" width="100px" height="100px"/>
+</template>
+
+<script setup>
+//svg图标，不再需要导入组件就可以直接使用
+//import SvgIcon from "@/components/common/svg/Index.vue"
+</script>
+```
+
+
+
 
 
 ## 二、侧边栏

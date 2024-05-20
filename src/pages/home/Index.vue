@@ -1,26 +1,16 @@
 <template>
-  <div
-    :style="{
+  <div :style="{
       background: themeStore.isDark ? '' : '#fff',
       padding: '20px',
       height: '200vh',
-    }"
-  >
+    }">
     <el-button>首页</el-button>
     <el-button type="success">测试</el-button>
 
     <div>
-      <el-pagination
-        v-model:current-page="currentPage1"
-        :page-size="100"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
-        layout="total, prev, pager, next"
-        :total="1000"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination v-model:current-page="currentPage1" :page-size="100" :small="small" :disabled="disabled"
+        :background="background" layout="total, prev, pager, next" :total="1000" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
     <div class="mb-4">
@@ -39,6 +29,12 @@
       <el-button type="info" plain>Info</el-button>
       <el-button type="warning" plain>Warning</el-button>
       <el-button type="danger" plain>Danger</el-button>
+    </div>
+
+    <div style="margin-top: 20px">
+      svg图标封装测试
+      <svg-icon name="store" width="100px" height="100px" />
+      <svg-icon name="switch" width="100px" height="100px" />
     </div>
   </div>
 </template>

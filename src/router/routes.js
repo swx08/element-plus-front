@@ -36,6 +36,38 @@ export const constantRoutes = [
     },
   },
   {
+    path: "/chat",
+    name: "Chat",
+    component: () => import("@/components/layout/Index.vue"),
+    meta: {
+      title: "聊天管理",
+      hidden: false,
+      icon: "UploadFilled",
+    },
+    children: [
+      {
+        path: "/openai",
+        name: "Openai",
+        component: () => import("@/pages/chat/openai/Index.vue"),
+        meta: {
+          title: "openai",
+          hidden: false,
+          icon: "UploadFilled",
+        },
+      },
+      {
+        path: "/allama",
+        name: "Allama",
+        component: () => import("@/pages/chat/allama/Index.vue"),
+        meta: {
+          title: "allama",
+          hidden: false,
+          icon: "UploadFilled",
+        },
+      },
+    ],
+  },
+  {
     path: "/404",
     name: "404",
     component: () => import("@/pages/404/Index.vue"),
@@ -44,7 +76,7 @@ export const constantRoutes = [
       hidden: true,
       icon: "UploadFilled",
     },
-  }
+  },
 ];
 
 //异步路由(动态路由)

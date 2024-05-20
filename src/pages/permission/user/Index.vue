@@ -49,10 +49,8 @@
               style="margin-right: 8px"
               v-for="(item, index) in scope.row.roles"
               :key="index"
-              type="success"
-              round
+              :type="scope.row.username === 'admin' ? 'primary' : 'success'"
               effect="dark"
-              :color="scope.row.username === 'admin' ? '#F56C6C' : ''"
               >{{ item }}</el-tag
             >
           </template>

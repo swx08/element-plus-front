@@ -22,6 +22,10 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 import './permission';
 //引入自定义指令文件
 import { hasButton } from '@/button/has';
+//引入SVG
+import "virtual:svg-icons-register";
+//引入自定义插件用来注册全局组件
+import globalComponent from "@/plugins";
 
 const app = createApp(App);
 const persist = createPersistedState();
@@ -36,6 +40,8 @@ app.use(ElementPlus, {
 });
 
 //将各种实例挂载到全局
+//安装自定义插件
+app.use(globalComponent);
 app.use(pinia);
 pinia.use(persist);
 app.use(router);
