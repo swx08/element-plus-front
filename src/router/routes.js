@@ -36,38 +36,6 @@ export const constantRoutes = [
     },
   },
   {
-    path: "/chat",
-    name: "Chat",
-    component: () => import("@/components/layout/Index.vue"),
-    meta: {
-      title: "聊天管理",
-      hidden: false,
-      icon: "UploadFilled",
-    },
-    children: [
-      {
-        path: "/openai",
-        name: "Openai",
-        component: () => import("@/pages/chat/openai/Index.vue"),
-        meta: {
-          title: "openai",
-          hidden: false,
-          icon: "UploadFilled",
-        },
-      },
-      {
-        path: "/allama",
-        name: "Allama",
-        component: () => import("@/pages/chat/allama/Index.vue"),
-        meta: {
-          title: "allama",
-          hidden: false,
-          icon: "UploadFilled",
-        },
-      },
-    ],
-  },
-  {
     path: "/404",
     name: "404",
     component: () => import("@/pages/404/Index.vue"),
@@ -124,39 +92,6 @@ export const asyncRoutes = [
       },
     ],
   },
-  {
-    path: "/other",
-    name: "Other",
-    component: () => import("@/components/layout/Index.vue"),
-    meta: {
-      title: "其他",
-      hidden: false,
-      icon: "Avatar",
-    },
-    redirect: "/other/page1",
-    children: [
-      {
-        path: "/other/page1",
-        name: "Page1",
-        component: () => import("@/pages/other/page1/Index.vue"),
-        meta: {
-          title: "页面1",
-          hidden: false,
-          icon: "Promotion",
-        },
-      },
-      {
-        path: "/other/page2",
-        name: "Page2",
-        component: () => import("@/pages/other/page2/Index.vue"),
-        meta: {
-          title: "页面2",
-          hidden: false,
-          icon: "Promotion",
-        },
-      },
-    ],
-  }
 ];
 
 //任意路由

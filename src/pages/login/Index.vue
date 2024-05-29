@@ -69,8 +69,8 @@ const userStore = useUserStore();
 const loading = ref(false);
 const loginForm = ref();
 const user = ref({
-  username: "admin",
-  password: "111",
+  username: "test",
+  password: "test123",
 });
 
 const rules = ref({

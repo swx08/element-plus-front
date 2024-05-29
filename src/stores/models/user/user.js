@@ -50,21 +50,24 @@ let useUserStore = defineStore("User", {
     async userInfo() {
       let res = await getUserInfo();
       if (res.code === 200) {
+        this.menuRoutes = constantRoutes;
         this.username = res.data.user.username;
         this.avatar = res.data.user.username;
-        this.buttons = res.data.button;
-        //计算当前用户的异步路由,需要进行深拷贝处理，否则页面刷新后路由会错乱
-        let userAsyncRoutes = filterAsyncRoute(
-          cloneDeep(asyncRoutes),
-          res.data.routes
-        );
-        //菜单需要的路由数据整理完毕，相当于数组合并，
-        //这里注意一定要把任意路由加到数组最后，否则会导致页面显示白屏
-        this.menuRoutes = [...constantRoutes, ...userAsyncRoutes, anyRoute];
-        //动态路由追加
-        userAsyncRoutes.forEach((route) => {
-          router.addRoute(route);
-        });
+        if (res.data.routes !== undefined) {
+          this.buttons = res.data.permissions;
+          //计算当前用户的异步路由,需要进行深拷贝处理，否则页面刷新后路由会错乱
+          let userAsyncRoutes = filterAsyncRoute(
+            cloneDeep(asyncRoutes),
+            res.data.routes
+          );
+          //菜单需要的路由数据整理完毕，相当于数组合并，
+          //这里注意一定要把任意路由加到数组最后，否则会导致页面显示白屏
+          this.menuRoutes = [...constantRoutes, ...userAsyncRoutes, anyRoute];
+          //动态路由追加
+          userAsyncRoutes.forEach((route) => {
+            router.addRoute(route);
+          });
+        }
         return "ok";
       } else {
         return Promise.reject(new Error(res.message));

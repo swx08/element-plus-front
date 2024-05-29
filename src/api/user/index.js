@@ -16,7 +16,7 @@ export function getUserInfo() {
   return request({
     //模板字符串拼接参数
     url: `${PREFIX}/info`,
-    method: "GET"
+    method: "POST"
   });
 }
 
