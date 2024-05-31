@@ -62,8 +62,9 @@
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="240">
-        <template #default>
-          <el-button link type="primary" :icon="CirclePlus">
+        <template #default="scope">
+          <el-button :disabled="scope.row.type === 2 ? true : false" link type="primary" :icon="CirclePlus"
+            @click="handlerAddMenuOpen(scope.row.title)" v-permission="`permission:menu:add`">
             新增
           </el-button>
           <el-button link type="primary" :icon="Delete">修改</el-button>
@@ -205,6 +206,14 @@ const handlerAddDicMenuOpen = () => {
 
 //新增菜单弹框
 const tempParent = ref("");
+const handlerAddMenuOpen = (item) => {
+  isBtnEdit.value = true;
+  isBtn.value = true;
+  isDic.value = false;
+  addMenuOpen.value = true;
+  tempParent.value = item;
+  menu.value.parent = ref(item);
+}
 
 //新增、修改菜单
 const handleSaveMenu = () => {
