@@ -20,6 +20,15 @@ export function queryMenuListByLike(data) {
   });
 }
 
+export function addMenu(data) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/add`,
+    method: "POST",
+    data: data,
+  });
+}
+
 export function queryRoleMenu(data) {
   return request({
     //模板字符串拼接参数

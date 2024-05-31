@@ -73,13 +73,70 @@
     </el-table>
   </el-card>
 
+  <!-- 新增 / 修改菜单弹框 -->
+  <el-dialog v-model="addMenuOpen" @close="handlerCancel" :title="menu.id === undefined ? '添加菜单' : '修改菜单'" width="500">
+    <el-form :model="menu" ref="formRef" :rules="rules" label-position="right">
+      <el-form-item v-if="isDic" label="上级菜单" prop="parent" :label-width="140">
+        <el-input style="width: 80%" disabled v-model="menu.parent" autocomplete="off" />
+      </el-form-item>
+      <el-form-item v-else label="上级菜单" prop="parent" :label-width="140">
+        <el-input style="width: 80%" disabled v-model="menu.parent" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="菜单类型" prop="type" :label-width="140">
+        <el-radio-group v-model="menu.type">
+          <el-radio :value="0" v-if="isDic">目录</el-radio>
+          <el-radio :value="1" v-if="isBtn" @click="handleMenu">菜单</el-radio>
+          <el-radio :value="2" v-if="isBtn" @click="handleBtn">按钮</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item v-if="hasName" label="组件名称" prop="name" :label-width="140">
+        <el-input style="width: 80%" placeholder="大写字母开头，如：Permission" v-model="menu.name" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="菜单名称" prop="title" :label-width="140">
+        <el-input style="width: 80%" :placeholder="hasName ? '如：权限管理' : '如：用户删除'" v-model="menu.title"
+          autocomplete="off" />
+      </el-form-item>
+      <el-form-item v-if="isBtn" label="权限标识" prop="permission" :label-width="140">
+        <el-input style="width: 80%" placeholder="如：permission:user:add" v-model="menu.permission" autocomplete="off" />
+      </el-form-item>
+      <el-form-item v-if="isBtnEdit" label="组件路径" prop="component" :label-width="140">
+        <el-input style="width: 80%" placeholder="如：/permission/user/index" v-model="menu.component"
+          autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="菜单状态" prop="status" :label-width="140">
+        <el-radio-group v-model="menu.status">
+          <el-radio :value="1">开启</el-radio>
+          <el-radio :value="0">关闭</el-radio>
+        </el-radio-group>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" :loading="saveLoading" @click="handleSaveMenu">
+          确定
+        </el-button>
+        <el-button @click="handlerCancel">取消</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryMenuList, queryRoleMenu, queryMenuListByLike } from "@/api/menu";
-import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue'
+import { queryMenuList, queryRoleMenu, queryMenuListByLike, addMenu } from "@/api/menu";
+import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue';
+import { verifyMenuName } from "@/utils/regexutils";
+import { ElMessage } from 'element-plus'
 
+const saveLoading = ref(false);
+//新增菜单弹框
+const addMenuOpen = ref(false);
+const tableData = ref([]);
+const isDic = ref(false);
+const isBtn = ref(false);
+const isBtnEdit = ref(false);
+const hasName = ref(true);
+const menu = ref({});
 const searchMenu = ref({
   title: "",
   type: null,
@@ -128,6 +185,142 @@ const handleSearch = () => {
     getMenuListByLike();
   }
 }
+
+//新增菜单弹框取消回调
+const handlerCancel = () => {
+  addMenuOpen.value = false;
+  menu.value = {};
+  tempParent.value = "";
+}
+
+//新增目录弹框
+const handlerAddDicMenuOpen = () => {
+  isBtnEdit.value = false;
+  isDic.value = true;
+  isBtn.value = false;
+  addMenuOpen.value = true;
+  hasName.value = true;
+  menu.value.parent = ref("主类目");
+}
+
+//新增菜单弹框
+const tempParent = ref("");
+
+//新增、修改菜单
+const handleSaveMenu = () => {
+  formRef.value.validate((valid) => {
+    if (valid) {
+      //校验菜单权限标识和组件路径是否符合规范
+      try {
+        verifyMenuName(menu.value);
+      } catch (error) {
+        ElMessage({
+          type: 'error',
+          message: error.message,
+        })
+        return;
+      }
+      saveLoading.value = true;
+      if (menu.value.id === undefined) {
+        //新增菜单
+        addMenu(menu.value).then((res) => {
+          if (res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '新增成功！',
+            });
+            addMenuOpen.value = false;
+            saveLoading.value = false;
+            menu.value = {};
+            getAllMenuData();
+          } else {
+            saveLoading.value = false;
+          }
+        })
+      } else {
+        //修改菜单
+        // updateMenu(menu.value).then((res) => {
+        //   if (res.code === 200) {
+        //     message.success("修改成功！");
+        //     addMenuOpen.value = false;
+        //     saveLoading.value = false;
+        //     menu.value = {};
+        //     getMenuList();
+        //   } else {
+        //     saveLoading.value = false;
+        //   }
+        // });
+      }
+    }
+  })
+}
+
+//点击菜单时
+const handleMenu = () => {
+  isDic.value = false;
+  isBtn.value = true;
+  isBtnEdit.value = true;
+  hasName.value = true;
+  menu.value = ref({});
+  menu.value.parent = ref(tempParent.value);
+}
+
+//点击按钮时
+const handleBtn = () => {
+  isDic.value = false;
+  isBtn.value = true;
+  isBtnEdit.value = false;
+  hasName.value = false;
+  menu.value = ref({});
+  menu.value.parent = ref(tempParent.value);
+}
+
+//表达验证
+const formRef = ref();
+const rules = ref({
+  name: [
+    {
+      required: true,
+      message: '请输入组件名称',
+      trigger: 'change',
+    },
+  ],
+  title: [
+    {
+      required: true,
+      message: '请输入菜单名称',
+      trigger: 'change',
+    },
+  ],
+  type: [
+    {
+      required: true,
+      message: '请选择菜单类型',
+      trigger: 'change',
+    },
+  ],
+  status: [
+    {
+      required: true,
+      message: '请选择菜单状态',
+      trigger: 'change',
+    },
+  ],
+  permission: [
+    {
+      required: true,
+      message: '请输入权限标识',
+      trigger: 'change',
+    },
+  ],
+  component: [
+    {
+      required: true,
+      message: '请输入组件路径',
+      trigger: 'change',
+    },
+  ],
+})
 </script>
 <style scoped lang="scss">
 .a-row-search {
