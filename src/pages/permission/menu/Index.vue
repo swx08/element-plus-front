@@ -67,9 +67,14 @@
             @click="handlerAddMenuOpen(scope.row.title)" v-permission="`permission:menu:add`">
             新增
           </el-button>
-          <el-button v-permission="`permission:menu:update`" link type="primary" :icon="Delete"
+          <el-button v-permission="`permission:menu:update`" link type="primary" :icon="Edit"
             @click="handleEchoMenu(scope.row.id)">修改</el-button>
-          <el-button link type="danger" :icon="Edit">删除</el-button>
+          <el-popconfirm title="确认删除该菜单？" confirm-button-text="确定" cancel-button-text="取消"
+            @confirm="handleRemoveMenu(scope.row.id)" width="160px">
+            <template #reference>
+              <el-button link type="danger" v-permission="`permission:menu:delete`" :icon="Delete">删除</el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -125,7 +130,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryMenuList, queryRoleMenu, queryMenuListByLike, addMenu, echoMenu, updateMenu } from "@/api/menu";
+import { queryMenuList, queryRoleMenu, queryMenuListByLike, addMenu, echoMenu, updateMenu, removeMenu } from "@/api/menu";
 import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue';
 import { verifyMenuName } from "@/utils/regexutils";
 import { ElMessage } from 'element-plus'
@@ -311,6 +316,19 @@ const handleEchoMenu = (id) => {
         hasName.value = false;
         addMenuOpen.value = true;
       }
+    }
+  })
+}
+
+//删除菜单
+const handleRemoveMenu = (id) => {
+  removeMenu(id).then((res) => {
+    if (res.code === 200) {
+      ElMessage({
+        type: 'success',
+        message: '菜单删除成功！',
+      });
+      getAllMenuData();
     }
   })
 }
