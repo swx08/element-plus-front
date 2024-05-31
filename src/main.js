@@ -21,7 +21,7 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 //引入路由鉴权文件
 import './permission';
 //引入自定义指令文件
-import { hasButton } from '@/button/has';
+import { hasPermission } from "@/permission/index";
 //引入SVG
 import "virtual:svg-icons-register";
 //引入自定义插件用来注册全局组件
@@ -29,7 +29,8 @@ import globalComponent from "@/plugins";
 
 const app = createApp(App);
 const persist = createPersistedState();
-hasButton(app);
+//注册自定义指令
+hasPermission(app);
 // 注册ElementPlus图标库
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);

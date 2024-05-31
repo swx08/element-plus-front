@@ -37,3 +37,14 @@ export function queryRoleMenu(data) {
     data: data
   });
 }
+
+export function echoMenu(id) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/echo`,
+    method: "GET",
+    params: {
+      id,
+    },
+  });
+}

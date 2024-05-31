@@ -67,7 +67,8 @@
             @click="handlerAddMenuOpen(scope.row.title)" v-permission="`permission:menu:add`">
             新增
           </el-button>
-          <el-button link type="primary" :icon="Delete">修改</el-button>
+          <el-button v-permission="`permission:menu:update`" link type="primary" :icon="Delete"
+            @click="handleEchoMenu(scope.row.id)">修改</el-button>
           <el-button link type="danger" :icon="Edit">删除</el-button>
         </template>
       </el-table-column>
@@ -124,7 +125,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryMenuList, queryRoleMenu, queryMenuListByLike, addMenu } from "@/api/menu";
+import { queryMenuList, queryRoleMenu, queryMenuListByLike, addMenu, echoMenu } from "@/api/menu";
 import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue';
 import { verifyMenuName } from "@/utils/regexutils";
 import { ElMessage } from 'element-plus'
@@ -132,7 +133,6 @@ import { ElMessage } from 'element-plus'
 const saveLoading = ref(false);
 //新增菜单弹框
 const addMenuOpen = ref(false);
-const tableData = ref([]);
 const isDic = ref(false);
 const isBtn = ref(false);
 const isBtnEdit = ref(false);
@@ -282,6 +282,34 @@ const handleBtn = () => {
   hasName.value = false;
   menu.value = ref({});
   menu.value.parent = ref(tempParent.value);
+}
+
+//回显菜单数据
+const handleEchoMenu = (id) => {
+  echoMenu(id).then((res) => {
+    if (res.code === 200) {
+      menu.value = res.data;
+      if (menu.value.type === 0) {
+        isDic.value = true;
+        hasName.value = true;
+        isBtn.value = false;
+        isBtnEdit.value = false;
+        addMenuOpen.value = true;
+      } else if (menu.value.type === 1) {
+        isDic.value = false;
+        isBtn.value = true;
+        isBtnEdit.value = true;
+        hasName.value = true;
+        addMenuOpen.value = true;
+      } else {
+        isDic.value = false;
+        isBtn.value = true;
+        isBtnEdit.value = false;
+        hasName.value = false;
+        addMenuOpen.value = true;
+      }
+    }
+  })
 }
 
 //表达验证
