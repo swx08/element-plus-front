@@ -1,8 +1,26 @@
 // 引入清除默认样式
 @import "./reset.scss";
 
-//滚动条样式设置
 /* 隐藏滚动条 */
 ::-webkit-scrollbar {
-    display: none;
+    width: 7px;
+}
+
+/* 设置水平滚动条的宽度 */
+::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #535b83; // 滑块颜色
+    border-radius: 5px; // 滑块圆角
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #73767a; // 鼠标移入滑块变红
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px; // 轨道圆角
+    background-color: #eee // 轨道颜色 
 }
