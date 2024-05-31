@@ -125,7 +125,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryMenuList, queryRoleMenu, queryMenuListByLike, addMenu, echoMenu } from "@/api/menu";
+import { queryMenuList, queryRoleMenu, queryMenuListByLike, addMenu, echoMenu, updateMenu } from "@/api/menu";
 import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue';
 import { verifyMenuName } from "@/utils/regexutils";
 import { ElMessage } from 'element-plus'
@@ -248,17 +248,20 @@ const handleSaveMenu = () => {
         })
       } else {
         //修改菜单
-        // updateMenu(menu.value).then((res) => {
-        //   if (res.code === 200) {
-        //     message.success("修改成功！");
-        //     addMenuOpen.value = false;
-        //     saveLoading.value = false;
-        //     menu.value = {};
-        //     getMenuList();
-        //   } else {
-        //     saveLoading.value = false;
-        //   }
-        // });
+        updateMenu(menu.value).then((res) => {
+          if (res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '修改成功！',
+            });
+            addMenuOpen.value = false;
+            saveLoading.value = false;
+            menu.value = {};
+            getAllMenuData();
+          } else {
+            saveLoading.value = false;
+          }
+        });
       }
     }
   })

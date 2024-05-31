@@ -38,6 +38,15 @@ export function queryRoleMenu(data) {
   });
 }
 
+export function updateMenu(data) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/update`,
+    method: "PUT",
+    data: data,
+  });
+}
+
 export function echoMenu(id) {
   return request({
     //模板字符串拼接参数
