@@ -45,7 +45,12 @@
           </el-button>
           <el-button v-permission="`permission:user:update`" :icon="Edit" type="primary" link
             @click="handleEchoUser(scope.row.id)">修改</el-button>
-          <el-button v-has="`btn:user:remove`" :icon="Delete" type="danger" link>删除</el-button>
+          <el-popconfirm title="确认删除该用户？" confirm-button-text="确定" cancel-button-text="取消"
+            @confirm="handleRemoveUser(scope.row.id)" width="160px">
+            <template #reference>
+              <el-button v-permission="`permission:user:delete`" :icon="Delete" type="danger" link>删除</el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -109,7 +114,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo } from "@/api/user";
+import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo, deleteUser } from "@/api/user";
 import { queryRoleList } from "@/api/role";
 import { User, Edit, Delete } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -261,48 +266,15 @@ const handleAssign = () => {
   });
 };
 
-//取消新增用户
-const handleConsole = () => {
-  isDialog.value = false;
-};
-
-//新增用户按钮
-const handleAddUser = () => {
-  isDialog.value = true;
-};
-
-//保存新增用户
-const saveRole = () => {
-  save(user.value).then((res) => {
+//删除用户
+const handleRemoveUser = (id) => {
+  deleteUser(id).then((res) => {
     if (res.code === 200) {
       ElMessage({
-        message: "新增用户成功",
+        message: "删除成功",
         type: "success",
       });
-      isDialog.value = false;
       getUserList();
-    }
-  });
-};
-
-//修改用户
-const handleSaveUser = () => {
-  formRef.value.validate((valid) => {
-    if (valid) {
-      saveLoading.value = true;
-      updateUserInfo(user.value).then((res) => {
-        if (res.code === 200) {
-          ElMessage({
-            type: 'success',
-            message: '修改成功！',
-          })
-          updateUserOpen.value = false;
-          saveLoading.value = false;
-          getUserList();
-        } else {
-          saveLoading.value = false;
-        }
-      })
     }
   })
 }

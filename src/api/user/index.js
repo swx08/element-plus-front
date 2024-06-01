@@ -70,3 +70,11 @@ export function queryEchoUserInfo(id) {
     method: "GET",
   });
 }
+
+export function deleteUser(id) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/delete/${id}`,
+    method: "DELETE",
+  });
+}
