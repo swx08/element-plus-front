@@ -13,7 +13,7 @@
         <el-form-item>
             <div class="form-item-forget">
                 <el-checkbox v-model="user.remember">记住密码</el-checkbox>
-                <el-button link type="primary" @click="submitForm">忘记密码</el-button>
+                <el-button link type="primary">忘记密码</el-button>
             </div>
         </el-form-item>
         <el-form-item>

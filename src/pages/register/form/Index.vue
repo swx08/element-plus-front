@@ -14,7 +14,7 @@
             <el-input style="width: 90%" :prefix-icon="Cellphone" placeholder="手机号" v-model="user.phone"></el-input>
         </el-form-item>
         <el-form-item prop="email">
-            <el-input style="width: 90%" placeholder="邮箱" v-model="user.email">
+            <el-input style="width: 90%" @keyup.enter="doRegister" placeholder="邮箱" v-model="user.email">
                 <template #prefix>
                     <el-icon class="el-input__icon">
                         <svg-icon name="email" width="15px" height="15px"></svg-icon>
