@@ -45,11 +45,11 @@ export function queryRoles(userId) {
   });
 }
 
-export function save(data) {
+export function updateUserInfo(data) {
   return request({
     //模板字符串拼接参数
-    url: `${PREFIX}/save`,
-    method: "POST",
+    url: `${PREFIX}/update`,
+    method: "PUT",
     data: data,
   });
 }
@@ -60,5 +60,13 @@ export function saveRoles(username, data) {
     url: `${PREFIX}/save/roles/${username}`,
     method: "POST",
     data: data,
+  });
+}
+
+export function queryEchoUserInfo(id) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/echo/${id}`,
+    method: "GET",
   });
 }

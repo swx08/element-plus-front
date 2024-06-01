@@ -43,7 +43,8 @@
           <el-button :icon="User" type="primary" link v-has="`btn:user:per:role`" @click="handleRole(scope.row)">
             分配角色
           </el-button>
-          <el-button v-has="`btn:user:update`" :icon="Edit" type="primary" link>修改</el-button>
+          <el-button v-permission="`permission:user:update`" :icon="Edit" type="primary" link
+            @click="handleEchoUser(scope.row.id)">修改</el-button>
           <el-button v-has="`btn:user:remove`" :icon="Delete" type="danger" link>删除</el-button>
         </template>
       </el-table-column>
@@ -84,24 +85,23 @@
     </template>
   </el-drawer>
 
-  <!-- 新增弹框 -->
+  <!-- 修改用户弹框 -->
   <div>
-    <el-dialog style="border-radius: 5px" v-model="isDialog" align-center :show-close="false" title="新增用户" :width="300">
-      <div style="margin-top: 10px">
-        <el-form label-position="left" :model="user">
-          <el-form-item label="用户名" :label-width="60">
-            <el-input v-model="user.username" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="密码" :label-width="60">
-            <el-input show-password type="password" v-model="user.password" autocomplete="off" />
-          </el-form-item>
-        </el-form>
-      </div>
+    <el-dialog @close="handlerCancel" v-model="updateUserOpen" title="修改用户" width="500">
+      <el-form :model="user" ref="formRef" :rules="rules">
+        <el-form-item label="用户名称" prop="username" :label-width="140">
+          <el-input style="width: 80%" v-model="user.username" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone" :label-width="140">
+          <el-input style="width: 80%" v-model="user.phone" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email" :label-width="140">
+          <el-input style="width: 80%" v-model="user.email" autocomplete="off" />
+        </el-form-item>
+      </el-form>
       <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="handleConsole">取消</el-button>
-          <el-button type="primary" @click="saveRole"> 确认 </el-button>
-        </div>
+        <el-button type="primary" @click="handleSaveUser"> 确认 </el-button>
+        <el-button @click="handlerCancel">取消</el-button>
       </template>
     </el-dialog>
   </div>
@@ -109,7 +109,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { findUserList, save, queryRoles, saveRoles } from "@/api/user";
+import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo } from "@/api/user";
 import { queryRoleList } from "@/api/role";
 import { User, Edit, Delete } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -120,16 +120,20 @@ const tableData = ref([]);
 const pageNo = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+const updateUserOpen = ref(false);
+const resetPwdOpen = ref(false);
 //搜索用户名
 const searchUser = ref({
   username: '',
   phone: '',
   status: null
 });
-const user = ref({
-  username: "",
-  password: "",
+//重置密码
+const resetUserPwd = ref({
+  id: null,
+  password: ''
 });
+const user = ref({});
 //所有角色数据
 const roleList = ref([]);
 //是否弹出分配角色抽屉
@@ -182,6 +186,26 @@ const handleSearch = () => {
     saveLoading.value = true;
     getUserList();
     saveLoading.value = false;
+  }
+}
+
+//用户数据回显
+const handleEchoUser = (id) => {
+  queryEchoUserInfo(id).then((res) => {
+    if (res.code === 200) {
+      user.value = res.data;
+      updateUserOpen.value = true;
+    }
+  })
+}
+
+//取消修改用户弹框
+const handlerCancel = () => {
+  updateUserOpen.value = false;
+  resetPwdOpen.value = false;
+  resetUserPwd.value = {
+    id: null,
+    password: ''
   }
 }
 
@@ -260,6 +284,60 @@ const saveRole = () => {
     }
   });
 };
+
+//修改用户
+const handleSaveUser = () => {
+  formRef.value.validate((valid) => {
+    if (valid) {
+      saveLoading.value = true;
+      updateUserInfo(user.value).then((res) => {
+        if (res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '修改成功！',
+          })
+          updateUserOpen.value = false;
+          saveLoading.value = false;
+          getUserList();
+        } else {
+          saveLoading.value = false;
+        }
+      })
+    }
+  })
+}
+
+const formRef = ref();
+const rules = ref({
+  username: [
+    {
+      required: true,
+      message: '请输入用户名称',
+      trigger: 'change',
+    },
+  ],
+  phone: [
+    {
+      required: true,
+      message: '请输入手机号',
+      trigger: 'change',
+    },
+  ],
+  email: [
+    {
+      required: true,
+      message: '请输入邮箱',
+      trigger: 'change',
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: '请输入新密码',
+      trigger: 'change',
+    },
+  ],
+})
 </script>
 <style scoped lang="scss">
 .dialog-footer {
