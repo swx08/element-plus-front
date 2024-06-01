@@ -12,6 +12,15 @@ export function doLogin(data) {
   });
 }
 
+export function register(data) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/register`,
+    method: "POST",
+    data: data,
+  });
+}
+
 export function doLogout() {
   return request({
     //模板字符串拼接参数
