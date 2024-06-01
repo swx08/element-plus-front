@@ -18,7 +18,7 @@
     <el-col :span="15">
       <div class="login-container-right">
         <div class="form-container">
-          <LoginForm />
+          <RegisterForm />
         </div>
       </div>
     </el-col>
@@ -28,7 +28,7 @@
 <script setup>
 import { ref } from 'vue';
 import setting from '@/setting';
-import LoginForm from "@/pages/login/form/Index.vue";
+import RegisterForm from "@/pages/register/form/Index.vue";
 import Carousel from "@/pages/login/carousel/Index.vue";
 
 </script>

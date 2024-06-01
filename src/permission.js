@@ -38,7 +38,9 @@ router.beforeEach(async (to, from, next) => {
     //用户未登录
     if (to.path === "/login") {
       next();
-    } else {
+    } else if(to.path === "/register") {
+      next();
+    } else{
       next({ path: "/login" });
     }
   }

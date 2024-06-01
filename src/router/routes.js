@@ -36,6 +36,16 @@ export const constantRoutes = [
     },
   },
   {
+    path: "/register",
+    name: "Register",
+    component: () => import("@/pages/register/Index.vue"),
+    meta: {
+      title: "注册",
+      hidden: true,
+      icon: "UploadFilled",
+    },
+  },
+  {
     path: "/404",
     name: "404",
     component: () => import("@/pages/404/Index.vue"),
