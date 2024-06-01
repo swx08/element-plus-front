@@ -1,6 +1,7 @@
 <template>
   <!-- 右侧 -->
   <el-space :size="25" style="padding-right: 15px;">
+    <Message />
     <el-tooltip content="刷新" placement="bottom">
       <el-button @click="doRefresh" circle icon="Refresh"></el-button>
     </el-tooltip>
@@ -48,6 +49,7 @@ import { doLogout } from "@/api/user";
 import { ElMessage } from "element-plus";
 import useUserStore from "@/stores/models/user/user.js";
 import router from "@/router/index";
+import Message from "@/components/header/right/msg/Index.vue";
 
 const userStore = useUserStore();
 const useRefresh = useRefreshStore();
