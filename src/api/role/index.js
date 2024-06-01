@@ -20,12 +20,12 @@ export function queryRoleList() {
   });
 }
 
-export function save(data) {
+export function addRole(data) {
   return request({
     //模板字符串拼接参数
-    url: `${PREFIX}/save`,
+    url: `${PREFIX}/add`,
     method: "POST",
-    data: data
+    data: data,
   });
 }
 

@@ -44,7 +44,8 @@
       <el-table-column prop="code" label="角色标识" width="180" />
       <el-table-column prop="status" label="状态" width="160">
         <template #default="scope">
-          <el-switch :disabled="scope.row.code === 'admin'" v-model="scope.row.checked" inline-prompt :active-icon="Check" :inactive-icon="Close" />
+          <el-switch :disabled="scope.row.code === 'admin'" v-model="scope.row.checked" inline-prompt
+            :active-icon="Check" :inactive-icon="Close" />
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="220" />
@@ -68,27 +69,23 @@
   </el-card>
 
   <!-- 新增弹框 -->
-  <div>
-    <el-dialog style="border-radius: 5px" v-model="addRoleOpen" align-center :show-close="false" title="新增角色"
-      :width="300">
-      <div style="margin-top: 10px">
-        <el-form :model="role">
-          <el-form-item label="角色" :label-width="40">
-            <el-input v-model="role.roleName" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="序号" :label-width="40">
-            <el-input type="number" v-model="role.sort" autocomplete="off" />
-          </el-form-item>
-        </el-form>
+  <el-dialog @close="handlerCancel" v-model="addRoleOpen" :title="role.id === undefined ? '添加角色' : '修改角色'" width="500">
+    <el-form :model="role" ref="formRef" :rules="rules">
+      <el-form-item label="角色名称" prop="name" :label-width="140">
+        <el-input placeholder="角色名称" style="width: 80%" v-model="role.name" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="角色标识" prop="code" :label-width="140">
+        <el-input placeholder="角色标识" style="width: 80%" v-model="role.code" autocomplete="off" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="handleSaveRole"> 确认 </el-button>
+        <el-button @click="handlerCancel">取消</el-button>
       </div>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="handleConsole">取消</el-button>
-          <el-button type="primary" @click="saveRole"> 确认 </el-button>
-        </div>
-      </template>
-    </el-dialog>
-  </div>
+    </template>
+  </el-dialog>
 
   <!-- 分配权限抽屉 -->
   <div>
@@ -107,7 +104,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
-import { findRoleList, save, savePermission } from "@/api/role";
+import { findRoleList, addRole, savePermission } from "@/api/role";
 import { queryMenuList, queryRoleMenu } from "@/api/menu";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -142,10 +139,7 @@ const tree = ref(null);
 const tempRole = ref(null);
 
 //收集角色表单内容
-const role = ref({
-  roleName: "",
-  sort: null,
-});
+const role = ref({});
 
 onMounted(() => {
   getRoleList();
@@ -194,29 +188,48 @@ const getAllMenuData = () => {
   });
 };
 
-//新增角色按钮弹框
-const handleAddRole = () => {
-  isDialog.value = true;
-};
+//取消新增角色弹框
+const handlerCancel = () => {
+  addRoleOpen.value = false;
+  role.value = {};
+}
 
-//取消新增角色
-const handleConsole = () => {
-  isDialog.value = false;
-};
-
-//新增角色逻辑
-const saveRole = () => {
-  save(role.value).then((res) => {
-    if (res.code === 200) {
-      ElMessage({
-        message: "新增角色成功",
-        type: "success",
-      });
-      isDialog.value = false;
-      getRoleList();
+//新增、修改角色
+const handleSaveRole = () => {
+  formRef.value.validate((valid) => {
+    if(valid){
+      saveLoading.value = true;
+      if (role.value.id === undefined) {
+        addRole(role.value).then((res) => {
+          if (res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '新增成功！'
+            })
+            addRoleOpen.value = false;
+            saveLoading.value = false;
+            role.value = {};
+            getRoleList();
+          } else {
+            saveLoading.value = false;
+          }
+        })
+      } else {
+        // updateRole(role.value).then((res) => {
+        //   if (res.code === 200) {
+        //     message.success("修改成功");
+        //     addRoleOpen.value = false;
+        //     saveLoading.value = false;
+        //     role.value = {};
+        //     getRoleList();
+        //   } else {
+        //     saveLoading.value = false;
+        //   }
+        // })
+      }
     }
-  });
-};
+  })
+}
 
 //分配权限抽屉弹出逻辑
 const handleOpenDrawer = (role) => {
@@ -254,6 +267,24 @@ const handleSavePermission = () => {
     }
   });
 };
+
+const formRef = ref();
+const rules = ref({
+  name: [
+    {
+      required: true,
+      message: '请输入角色名称',
+      trigger: 'change',
+    },
+  ],
+  code: [
+    {
+      required: true,
+      message: '请输入角色标识',
+      trigger: 'change',
+    },
+  ],
+})
 </script>
 
 
