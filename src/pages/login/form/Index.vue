@@ -38,7 +38,7 @@ const userStore = useUserStore();
 const loading = ref(false);
 const loginForm = ref();
 const user = ref({
-    username: "test",
+    username: "test2",
     password: "123456",
     remember: true
 });

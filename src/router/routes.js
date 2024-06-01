@@ -102,6 +102,39 @@ export const asyncRoutes = [
       },
     ],
   },
+  {
+    path: "/system",
+    name: "System",
+    component: () => import("@/components/layout/Index.vue"),
+    redirect: "/system/notice",
+    meta: {
+      title: "系统管理",
+      hidden: false,
+      icon: "Setting",
+    },
+    children: [
+      {
+        path: "/system/notice",
+        name: "Notice",
+        component: () => import("@/pages/system/notice/Index.vue"),
+        meta: {
+          title: "公告管理",
+          hidden: false,
+          icon: "Message",
+        },
+      },
+      {
+        path: "/system/log",
+        name: "Log",
+        component: () => import("@/pages/system/log/Index.vue"),
+        meta: {
+          title: "日志管理",
+          hidden: false,
+          icon: "Memo",
+        },
+      },
+    ],
+  },
 ];
 
 //任意路由
