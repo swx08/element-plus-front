@@ -42,7 +42,7 @@
     </div>
 
     <!-- 数据展示区 -->
-    <el-table :data="menuData" height="50vh" style="width: 100%; margin-bottom: 20px;" row-key="id">
+    <el-table :data="menuData" v-loading="loading" height="50vh" style="width: 100%" row-key="id">
       <el-table-column fixed prop="id" label="菜单编号" width="140" />
       <el-table-column fixed prop="name" label="组件名称" width="160" />
       <el-table-column prop="title" label="菜单名称" width="160" />
@@ -136,6 +136,7 @@ import { verifyMenuName } from "@/utils/regexutils";
 import { ElMessage } from 'element-plus'
 
 const saveLoading = ref(false);
+const loading = ref(true);
 //新增菜单弹框
 const addMenuOpen = ref(false);
 const isDic = ref(false);
@@ -160,6 +161,9 @@ const getAllMenuData = () => {
   queryMenuList().then((res) => {
     if (res.code === 200) {
       menuData.value = res.data;
+      loading.value = false;
+    } else {
+      loading.value = false;
     }
   });
 };

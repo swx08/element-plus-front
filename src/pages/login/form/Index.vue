@@ -38,8 +38,8 @@ const userStore = useUserStore();
 const loading = ref(false);
 const loginForm = ref();
 const user = ref({
-    username: "管理员",
-    password: "swx020708",
+    username: "test",
+    password: "123456",
     remember: true
 });
 

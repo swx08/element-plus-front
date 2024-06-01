@@ -38,7 +38,7 @@
       </el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" v-loading="loading" style="width: 100%">
       <el-table-column prop="id" label="角色编号" width="140" />
       <el-table-column prop="name" label="角色名称" width="180" />
       <el-table-column prop="code" label="角色标识" width="180" />
@@ -131,6 +131,7 @@ const searchRole = ref({
 });
 //搜索用户名
 const saveLoading = ref(false);
+const loading = ref(true);
 const menuData = ref([]);
 const defaultProps = {
   children: "children",
@@ -156,6 +157,9 @@ const getRoleList = () => {
     if (res.code === 200 && res.data !== null) {
       tableData.value = res.data.data;
       total.value = res.data.total;
+      loading.value = false;
+    }else{
+      loading.value = false;
     }
   });
 };

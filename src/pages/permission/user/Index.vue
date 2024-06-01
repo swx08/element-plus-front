@@ -31,15 +31,15 @@
       </div>
     </template>
 
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" v-loading="loading" style="width: 100%">
       <el-table-column fixed prop="id" label="用户编号" width="120" />
       <el-table-column fixed prop="username" label="用户名称" width="160" />
       <el-table-column prop="phone" label="手机号" width="180" />
       <el-table-column prop="email" label="邮箱" width="200" />
       <el-table-column prop="status" label="状态" width="120">
         <template #default="scope">
-          <el-switch @change="handleChangeStatus(scope.row.id)"
-            v-model="scope.row.checked" inline-prompt :active-icon="Check" :inactive-icon="Close" />
+          <el-switch @change="handleChangeStatus(scope.row.id)" v-model="scope.row.checked" inline-prompt
+            :active-icon="Check" :inactive-icon="Close" />
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="200" />
@@ -154,6 +154,7 @@ import { ElMessage } from "element-plus";
 
 //表格数据
 const saveLoading = ref(false);
+const loading = ref(true);
 const tableData = ref([]);
 const pageNo = ref(1);
 const pageSize = ref(10);
@@ -193,6 +194,9 @@ const getUserList = () => {
     if (res.code === 200 && res.data !== null) {
       tableData.value = res.data.data;
       total.value = res.data.total;
+      loading.value = false;
+    } else {
+      loading.value = false;
     }
   });
 };
