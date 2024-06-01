@@ -38,7 +38,7 @@ export function updateRole(data) {
   });
 }
 
-export function savePermission(data,roleId) {
+export function savePermission(roleId, data) {
   return request({
     //模板字符串拼接参数
     url: `${PREFIX}/save/permission/${roleId}`,

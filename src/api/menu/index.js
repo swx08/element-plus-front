@@ -29,12 +29,14 @@ export function addMenu(data) {
   });
 }
 
-export function queryRoleMenu(data) {
+export function queryRoleMenuList(id) {
   return request({
     //模板字符串拼接参数
-    url: `${PREFIX}/role/query`,
-    method: "POST",
-    data: data
+    url: `${PREFIX}/query/role/permissions`,
+    method: "GET",
+    params: {
+      id,
+    },
   });
 }
 

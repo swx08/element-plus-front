@@ -44,14 +44,15 @@
       <el-table-column prop="code" label="角色标识" width="180" />
       <el-table-column prop="status" label="状态" width="160">
         <template #default="scope">
-          <el-switch @change="handleChangeStatus(scope.row.id)" :disabled="scope.row.code === 'admin'" v-model="scope.row.checked" inline-prompt
-            :active-icon="Check" :inactive-icon="Close" />
+          <el-switch @change="handleChangeStatus(scope.row.id)" :disabled="scope.row.code === 'admin'"
+            v-model="scope.row.checked" inline-prompt :active-icon="Check" :inactive-icon="Close" />
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="220" />
       <el-table-column fixed="right" label="选项" width="300">
         <template #default="scope">
-          <el-button :icon="Lock" type="primary" link v-has="`btn:role:per`" @click="handleOpenDrawer(scope.row)">
+          <el-button :icon="Lock" type="primary" link v-permission="`permission:role:assign`"
+            @click="handlerPermiOpen(scope.row)">
             分配权限
           </el-button>
           <el-button v-permission="`permission:role:update`" link :icon="Edit" type="primary"
@@ -67,10 +68,9 @@
     </el-table>
 
     <!-- 分页 -->
-    <div style="margin-top: 20px">
-      <el-pagination v-model:current-page="pageNo" :page-size="pageSize" :small="small" :disabled="disabled"
-        :background="background" layout="total, prev, pager, next" :total="total" @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
+    <div class="pagination-style">
+      <el-pagination @change="handlePaginationChange" v-model:current-page="pageNo" :page-size="pageSize"
+        layout="prev, pager, next" :total="total" />
     </div>
   </el-card>
 
@@ -94,24 +94,26 @@
   </el-dialog>
 
   <!-- 分配权限抽屉 -->
-  <div>
-    <el-drawer @close="handleDrawerClose" size="24%" v-model="isDrawer" title="分配权限">
-      <template #default>
-        <el-tree ref="tree" style="max-width: 600px" :data="menuData" show-checkbox node-key="id" :props="defaultProps"
-          :default-checked-keys="checkedKeys" default-expand-all />
+  <el-drawer @close="onClose" size="26%" v-model="drawerOpen" title="分配权限">
+    <template #default>
+      <div class="permisson-role">
+        <span>角色分配：</span>
+        <el-input v-model:value="roleName" disabled style="width: 220px;height: 33px"></el-input>
+      </div>
+      <el-tree ref="tree" style="max-width: 600px" :data="menuData" show-checkbox node-key="key" :props="defaultProps"
+        :default-checked-keys="checkedKeys" default-expand-all />
 
-        <div class="confim">
-          <el-button type="primary" plain @click="handleSavePermission">确认</el-button>
-        </div>
-      </template>
-    </el-drawer>
-  </div>
+      <div class="confim">
+        <el-button type="primary" @click="handleSavePermission">确认</el-button>
+      </div>
+    </template>
+  </el-drawer>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { findRoleList, addRole, savePermission, echoRole, updateRole, removeRole, updateRoleStatus } from "@/api/role";
-import { queryMenuList, queryRoleMenu } from "@/api/menu";
+import { queryMenuList, queryRoleMenuList } from "@/api/menu";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 
@@ -121,6 +123,7 @@ const pageNo = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 const addRoleOpen = ref(false);
+const drawerOpen = ref(false);
 const searchRole = ref({
   name: "",
   code: "",
@@ -128,24 +131,20 @@ const searchRole = ref({
 });
 //搜索用户名
 const saveLoading = ref(false);
-//新增角色弹框
-const isDialog = ref(false);
-//分配权限抽屉弹出
-const isDrawer = ref(false);
 const menuData = ref([]);
 const defaultProps = {
   children: "children",
-  label: "label",
+  label: "title",
 };
 //默认选中
 const checkedKeys = ref([]);
 //获取树节点的ref
 const tree = ref(null);
 //用来临时存储role的值
-const tempRole = ref(null);
-
+const roleName = ref("");
 //收集角色表单内容
 const role = ref({});
+const roleId = ref(null);
 
 onMounted(() => {
   getRoleList();
@@ -160,6 +159,13 @@ const getRoleList = () => {
     }
   });
 };
+
+//监听分页变化
+const handlePaginationChange = (current, page) => {
+  pageNo.value = current;
+  pageSize.value = page;
+  getRoleList();
+}
 
 //重置
 const handleReset = () => {
@@ -250,39 +256,55 @@ const handleSaveRole = () => {
   })
 }
 
-//分配权限抽屉弹出逻辑
-const handleOpenDrawer = (role) => {
-  tempRole.value = role;
-  //获取当前角色所有的菜单权限的id
-  queryRoleMenu(role).then((res) => {
+//分配权限抽屉
+const handlerPermiOpen = (item) => {
+  if (item.code === 'admin') {
+    ElMessage({
+      type: 'warning',
+      message: '管理员不能分配权限'
+    })
+  } else {
+    roleName.value = item.name;
+    roleId.value = item.id;
+    //查询当前角色所拥有的权限
+    gerCureentPermission(item.id);
+  }
+}
+
+//查询当前角色所拥有的权限
+const gerCureentPermission = async (id) => {
+  await getAllMenuData();
+  queryRoleMenuList(id).then((res) => {
     if (res.code === 200) {
       checkedKeys.value = res.data;
-      getAllMenuData();
-      isDrawer.value = true;
+      drawerOpen.value = true;
     }
-  });
-};
+  })
+}
 
-//抽屉关闭时的回调
-const handleDrawerClose = () => {
+//关闭分配权限弹框
+const onClose = () => {
+  drawerOpen.value = false;
   checkedKeys.value = [];
-  tempRole.value = null;
-  isDrawer.value = false;
-  console.log("我是关闭");
-};
+}
 
 //保存分配好的权限数据
 const handleSavePermission = () => {
+  saveLoading.value = true;
   let tempKeys = tree.value.getCheckedKeys();
   let halfKeys = tree.value.getHalfCheckedKeys();
   let finalKeys = tempKeys.concat(halfKeys);
-  savePermission(finalKeys, tempRole.value.id).then((res) => {
+  savePermission(roleId.value,finalKeys).then((res) => {
     if (res.code === 200) {
       ElMessage({
-        message: "分配权限成功",
-        type: "success",
-      });
-      isDrawer.value = false;
+        type: 'success',
+        message: '分配权限成功！'
+      })
+      drawerOpen.value = false;
+      checkedKeys.value = [];
+      saveLoading.value = false;
+    } else {
+      saveLoading.value = false;
     }
   });
 };
@@ -334,6 +356,13 @@ const rules = ref({
 
 
 <style scoped lang="scss">
+.permisson-role {
+  height: 80px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
 .confim {
   width: 100%;
   height: 50px;
@@ -354,5 +383,13 @@ const rules = ref({
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+
+.pagination-style {
+  height: 120px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center
 }
 </style>
