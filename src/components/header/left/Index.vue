@@ -2,25 +2,21 @@
   <!-- 左侧 -->
   <div class="l-content">
     <div>
-      <el-icon
-        v-if="!collapseStore.collapse"
-        class="icons"
-        @click="changeCollapse"
-        ><Fold
-      /></el-icon>
-      <el-icon
-        class="icons"
-        v-if="collapseStore.collapse"
-        @click="changeCollapse"
-        ><Expand
-      /></el-icon>
+      <el-button link v-if="!collapseStore.collapse" @click="changeCollapse">
+        <el-icon class="icons">
+          <Fold />
+        </el-icon>
+      </el-button>
+
+      <el-button link v-if="collapseStore.collapse" @click="changeCollapse">
+        <el-icon class="icons">
+          <Expand />
+        </el-icon>
+      </el-button>
     </div>
 
     <div>
-      <el-breadcrumb
-        separator="/"
-        style="font-family: '微软雅黑体'; font-size: 14px; margin-left: 10px"
-      >
+      <el-breadcrumb separator="/" class="header-left-bread">
         <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item v-if="current" :to="current.path">{{
           current.meta.title
@@ -34,6 +30,7 @@
 import { computed } from "vue";
 import { useCollapseStore } from "@/stores/models/collapse/collapse.js";
 import { useBreadcrumbStore } from "@/stores/models/breadcrumb/breadcrumb.js";
+import { Expand, Fold } from "@element-plus/icons-vue";
 
 const breadcrumbStore = useBreadcrumbStore();
 const collapseStore = useCollapseStore();
@@ -55,5 +52,15 @@ const current = computed(() => {
 .font_common {
   font-family: "微软雅黑";
   font-size: 14px;
+}
+
+.icons {
+  font-size: 20px;
+}
+
+.header-left-bread {
+  font-family: '微软雅黑体';
+  font-size: 14px;
+  margin-left: 20px
 }
 </style>

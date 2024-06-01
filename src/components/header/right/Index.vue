@@ -1,21 +1,6 @@
 <template>
   <!-- 右侧 -->
-  <div class="r-content">
-    <el-tooltip content="gite" placement="bottom">
-      <el-link
-        :underline="false"
-        target="_blank"
-        href="https://gitee.com/six-key/vite-vue3"
-      >
-        <template #default>
-          <el-image
-            src="https://s2.loli.net/2024/04/20/G6rfcxOzjmuvnTH.png"
-            fit="contain"
-            style="height: 28px; width: 28px; margin-right: 12px"
-          ></el-image>
-        </template>
-      </el-link>
-    </el-tooltip>
+  <el-space :size="25" style="padding-right: 15px;">
     <el-tooltip content="刷新" placement="bottom">
       <el-button @click="doRefresh" circle icon="Refresh"></el-button>
     </el-tooltip>
@@ -23,21 +8,12 @@
       <el-button @click="changeScreen" circle icon="FullScreen"></el-button>
     </el-tooltip>
     <el-tooltip content="设置" placement="bottom">
-      <el-button
-        @click="changeTheme"
-        style="margin-right: 15px"
-        circle
-        icon="Setting"
-      ></el-button>
+      <el-button @click="changeTheme" circle icon="Setting"></el-button>
     </el-tooltip>
 
-    <el-dropdown>
+    <el-dropdown trigger="click">
       <el-space :size="12">
-        <el-avatar
-          shape="square"
-          :size="40"
-          src="https://ice.frostsky.com/2024/04/18/7f1f5acf8f45032e26fb73f6db9f2e24.jpeg"
-        />
+        <svg-icon name="man" width="37px" height="37px" />
         <span>{{ userStore.username }}</span>
         <el-icon style="margin-right: 20px">
           <arrow-down />
@@ -46,12 +22,20 @@
 
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>个人中心</el-dropdown-item>
-          <el-dropdown-item @click="doLogoOut">退出登录</el-dropdown-item>
+          <el-dropdown-item>
+            <el-button icon="User" link>
+              个人中心
+            </el-button>
+          </el-dropdown-item>
+          <el-dropdown-item @click="doLogoOut">
+            <el-button icon="SwitchButton" link>
+              退出登录
+            </el-button>
+          </el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
-  </div>
+  </el-space>
 </template>
 
 <script setup>

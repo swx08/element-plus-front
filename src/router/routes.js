@@ -20,7 +20,7 @@ export const constantRoutes = [
         meta: {
           title: "首页",
           hidden: false,
-          icon: "Avatar",
+          icon: "House",
         },
       },
     ],
@@ -67,7 +67,7 @@ export const asyncRoutes = [
         meta: {
           title: "用户管理",
           hidden: false,
-          icon: "UserFilled",
+          icon: "User",
         },
       },
       {
@@ -77,7 +77,7 @@ export const asyncRoutes = [
         meta: {
           title: "角色管理",
           hidden: false,
-          icon: "UserFilled",
+          icon: "Switch",
         },
       },
       {
@@ -87,7 +87,7 @@ export const asyncRoutes = [
         meta: {
           title: "菜单管理",
           hidden: false,
-          icon: "UserFilled",
+          icon: "Grid",
         },
       },
     ],
