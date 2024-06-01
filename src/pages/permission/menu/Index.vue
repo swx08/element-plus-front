@@ -130,7 +130,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryMenuList, queryRoleMenu, queryMenuListByLike, addMenu, echoMenu, updateMenu, removeMenu } from "@/api/menu";
+import { queryMenuList, queryMenuListByLike, addMenu, echoMenu, updateMenu, removeMenu } from "@/api/menu";
 import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue';
 import { verifyMenuName } from "@/utils/regexutils";
 import { ElMessage } from 'element-plus'
