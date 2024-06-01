@@ -24,8 +24,8 @@
 
         <div class="right-btn">
           <el-space :size="40">
-            <el-button type="primary" v-permission="`permission:role:query`" @click="handleSearch">查询</el-button>
-            <el-button @click="handleReset" v-permission="`permission:role:reset`">重置</el-button>
+            <el-button type="primary" v-permission="`permission:user:query`" @click="handleSearch">查询</el-button>
+            <el-button @click="handleReset" v-permission="`permission:user:reset`">重置</el-button>
           </el-space>
         </div>
       </div>
@@ -54,7 +54,7 @@
             </template>
           </el-popconfirm>
           <el-dropdown trigger="click" style="padding: 4px 0 0 10px;">
-            <el-button :icon="DArrowRight" type="primary" link>
+            <el-button :icon="DArrowRight" v-permission="`permission:user:more`" type="primary" link>
               更多
             </el-button>
             <template #dropdown>
