@@ -1,182 +1,109 @@
 <template>
-  <div style="height: auto">
-    <!-- 头部搜索 -->
-    <el-card style="width: 100%; margin-bottom: 10px" shadow="never">
-      <el-row :gutter="10">
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-          <el-input
-            v-model="username"
-            style="width: 35%"
-            placeholder="请输入用户名"
-            size="large"
-          >
-          </el-input>
-        </el-col>
-        <el-col
-          style="display: flex; justify-content: flex-end; align-items: center"
-          :xs="12"
-          :sm="12"
-          :md="12"
-          :lg="12"
-          :xl="12"
-        >
-          <el-space :size="20">
-            <el-button type="primary" plain>搜索</el-button>
-            <el-button type="danger" plain>重置</el-button>
+  <!-- 头部搜索 -->
+  <el-card style="width: 100%" shadow="never">
+    <!-- 顶部搜索区 -->
+    <template #header>
+      <div style="display: flex;">
+        <el-row :gutter="10" class="a-row-search">
+          <el-col :lg="8">
+            <span>用户名称：</span>
+            <el-input style="width: 200px" v-model="searchUser.username" placeholder="用户名称"></el-input>
+          </el-col>
+          <el-col :lg="8">
+            <span>手机号码：</span>
+            <el-input style="width: 200px" v-model="searchUser.phone" placeholder="手机号码"></el-input>
+          </el-col>
+          <el-col :lg="8">
+            <span>用户状态：</span>
+            <el-select v-model="searchUser.status" placeholder="用户状态" style="width: 200px">
+              <el-option label="开启" :value="1">开启</el-option>
+              <el-option label="关闭" :value="0">关闭</el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+
+        <div class="right-btn">
+          <el-space :size="40">
+            <el-button type="primary" v-permission="`permission:role:query`" @click="handleSearch">查询</el-button>
+            <el-button @click="handleReset" v-permission="`permission:role:reset`">重置</el-button>
           </el-space>
-        </el-col>
-      </el-row>
-    </el-card>
-
-    <!-- 表格数据展示 -->
-    <el-card style="width: 100%" shadow="never">
-      <div style="margin-bottom: 10px">
-        <el-button
-          v-has="`btn:user:add`"
-          @click="handleAddUser"
-          plain
-          type="primary"
-          >新增</el-button
-        >
+        </div>
       </div>
+    </template>
 
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="username" label="用户名" width="150" />
-        <el-table-column prop="password" label="密码" width="120" />
-        <el-table-column prop="roles" label="角色">
-          <template #default="scope">
-            <el-tag
-              style="margin-right: 8px"
-              v-for="(item, index) in scope.row.roles"
-              :key="index"
-              :type="scope.row.username === 'admin' ? 'primary' : 'success'"
-              effect="dark"
-              >{{ item }}</el-tag
-            >
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="选项">
-          <template #default="scope">
-            <el-button
-              :icon="User"
-              type="primary"
-              size="small"
-              v-has="`btn:user:per:role`"
-              @click="handleRole(scope.row)"
-            >
-              分配角色
-            </el-button>
-            <el-button
-              v-has="`btn:user:update`"
-              :icon="Edit"
-              type="primary"
-              size="small"
-              >编辑</el-button
-            >
-            <el-button
-              v-has="`btn:user:remove`"
-              :icon="Delete"
-              type="danger"
-              size="small"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column fixed prop="id" label="用户编号" width="120" />
+      <el-table-column fixed prop="username" label="用户名称" width="160" />
+      <el-table-column prop="phone" label="手机号" width="180" />
+      <el-table-column prop="email" label="邮箱" width="200" />
+      <el-table-column prop="status" label="状态" width="120" />
+      <el-table-column prop="createTime" label="创建时间" width="200" />
+      <el-table-column fixed="right" label="选项" width="260">
+        <template #default="scope">
+          <el-button :icon="User" type="primary" link v-has="`btn:user:per:role`" @click="handleRole(scope.row)">
+            分配角色
+          </el-button>
+          <el-button v-has="`btn:user:update`" :icon="Edit" type="primary" link>修改</el-button>
+          <el-button v-has="`btn:user:remove`" :icon="Delete" type="danger" link>删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-      <!-- 分页 -->
-      <div style="margin-top: 20px">
-        <el-pagination
-          v-model:current-page="pageNo"
-          :page-size="pageSize"
-          :small="small"
-          :disabled="disabled"
-          :background="background"
-          layout="total, prev, pager, next"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
-    </el-card>
+    <!-- 分页 -->
+    <div style="margin-top: 20px">
+      <el-pagination v-model:current-page="pageNo" :page-size="pageSize" :small="small" :disabled="disabled"
+        :background="background" layout="total, prev, pager, next" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
+    </div>
+  </el-card>
 
-    <!-- 分配角色抽屉 -->
-    <el-drawer
-      @close="handleDrawerClose"
-      size="24%"
-      v-model="isDrawer"
-      title="分配角色"
-    >
-      <template #default>
-        <el-form>
-          <el-form-item label="用户名称">
-            <el-input v-model="tempName" disabled=""></el-input>
-          </el-form-item>
-          <el-form-item label="角色列表">
-            <el-checkbox
-              v-model="checkAll"
-              :indeterminate="isIndeterminate"
-              @change="handleCheckAllChange"
-            >
-              全选
+  <!-- 分配角色抽屉 -->
+  <el-drawer @close="handleDrawerClose" size="24%" v-model="isDrawer" title="分配角色">
+    <template #default>
+      <el-form>
+        <el-form-item label="用户名称">
+          <el-input v-model="tempName" disabled=""></el-input>
+        </el-form-item>
+        <el-form-item label="角色列表">
+          <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+            全选
+          </el-checkbox>
+          <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
+            <el-checkbox v-for="role in roleList" :key="role" :label="role" :value="role">
+              {{ role }}
             </el-checkbox>
-            <el-checkbox-group
-              v-model="checkedRoles"
-              @change="handleCheckedCitiesChange"
-            >
-              <el-checkbox
-                v-for="role in roleList"
-                :key="role"
-                :label="role"
-                :value="role"
-              >
-                {{ role }}
-              </el-checkbox>
-            </el-checkbox-group>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+
+      <div class="dialog-footer">
+        <el-button plain type="primary" @click="handleAssign">
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-drawer>
+
+  <!-- 新增弹框 -->
+  <div>
+    <el-dialog style="border-radius: 5px" v-model="isDialog" align-center :show-close="false" title="新增用户" :width="300">
+      <div style="margin-top: 10px">
+        <el-form label-position="left" :model="user">
+          <el-form-item label="用户名" :label-width="60">
+            <el-input v-model="user.username" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="密码" :label-width="60">
+            <el-input show-password type="password" v-model="user.password" autocomplete="off" />
           </el-form-item>
         </el-form>
-
+      </div>
+      <template #footer>
         <div class="dialog-footer">
-          <el-button plain type="primary" @click="handleAssign">
-            确认
-          </el-button>
+          <el-button @click="handleConsole">取消</el-button>
+          <el-button type="primary" @click="saveRole"> 确认 </el-button>
         </div>
       </template>
-    </el-drawer>
-
-    <!-- 新增弹框 -->
-    <div>
-      <el-dialog
-        style="border-radius: 5px"
-        v-model="isDialog"
-        align-center
-        :show-close="false"
-        title="新增用户"
-        :width="300"
-      >
-        <div style="margin-top: 10px">
-          <el-form label-position="left" :model="user">
-            <el-form-item label="用户名" :label-width="60">
-              <el-input v-model="user.username" autocomplete="off" />
-            </el-form-item>
-            <el-form-item label="密码" :label-width="60">
-              <el-input
-                show-password
-                type="password"
-                v-model="user.password"
-                autocomplete="off"
-              />
-            </el-form-item>
-          </el-form>
-        </div>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="handleConsole">取消</el-button>
-            <el-button type="primary" @click="saveRole"> 确认 </el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -188,12 +115,17 @@ import { User, Edit, Delete } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 
 //表格数据
+const saveLoading = ref(false);
 const tableData = ref([]);
 const pageNo = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 //搜索用户名
-const username = ref("");
+const searchUser = ref({
+  username: '',
+  phone: '',
+  status: null
+});
 const user = ref({
   username: "",
   password: "",
@@ -217,7 +149,7 @@ onMounted(() => {
 
 //获取用户分页数据
 const getUserList = () => {
-  findUserList(pageNo.value, pageSize.value, username.value).then((res) => {
+  findUserList(pageNo.value, pageSize.value, searchUser.value).then((res) => {
     if (res.code === 200 && res.data !== null) {
       tableData.value = res.data.data;
       total.value = res.data.total;
@@ -233,6 +165,25 @@ const getAllRoleList = () => {
     }
   });
 };
+
+//重置
+const handleReset = () => {
+  searchUser.value = {
+    username: '',
+    phone: '',
+    status: null
+  }
+  getUserList();
+}
+
+//查询
+const handleSearch = () => {
+  if ((searchUser.value.username !== "") || (searchUser.value.phone !== "") || (searchUser.value.status !== null)) {
+    saveLoading.value = true;
+    getUserList();
+    saveLoading.value = false;
+  }
+}
 
 //分配角色弹出抽屉
 const tempName = ref("");
@@ -318,5 +269,19 @@ const saveRole = () => {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.a-row-search {
+  height: 60px;
+  width: 85%;
+  display: flex;
+  align-items: center;
+}
+
+.right-btn {
+  width: 15%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 </style>

@@ -28,12 +28,12 @@ export function getUserInfo() {
   });
 }
 
-export function findUserList(pageNo,pageSize,username) {
+export function findUserList(pageNo, pageSize, param) {
   return request({
     //模板字符串拼接参数
     url: `${PREFIX}/list/${pageNo}/${pageSize}`,
     method: "GET",
-    params: username,
+    params: param,
   });
 }
 
