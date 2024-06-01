@@ -40,9 +40,6 @@
       <el-table-column prop="createTime" label="创建时间" width="200" />
       <el-table-column fixed="right" label="选项" width="220">
         <template #default="scope">
-          <!-- <el-button :icon="User" type="primary" link v-has="`btn:user:per:role`" @click="handleRole(scope.row)">
-            分配角色
-          </el-button> -->
           <el-button v-permission="`permission:user:update`" :icon="Edit" type="primary" link
             @click="handleEchoUser(scope.row.id)">修改</el-button>
           <el-popconfirm title="确认删除该用户？" confirm-button-text="确定" cancel-button-text="取消"
@@ -64,7 +61,8 @@
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button :icon="Position" link type="primary">
+                  <el-button :icon="Position" v-permission="`permission:user:assign`" link type="primary"
+                    @click="handleRoleOpen(scope.row)">
                     分配角色
                   </el-button>
                 </el-dropdown-item>
@@ -76,19 +74,18 @@
     </el-table>
 
     <!-- 分页 -->
-    <div style="margin-top: 20px">
-      <el-pagination v-model:current-page="pageNo" :page-size="pageSize" :small="small" :disabled="disabled"
-        :background="background" layout="total, prev, pager, next" :total="total" @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
+    <div class="pagination-style">
+      <el-pagination @change="handlePaginationChange" v-model:current-page="pageNo" :page-size="pageSize"
+        layout="prev, pager, next" :total="total" />
     </div>
   </el-card>
 
   <!-- 分配角色抽屉 -->
-  <el-drawer @close="handleDrawerClose" size="24%" v-model="isDrawer" title="分配角色">
+  <el-drawer @close="onClose" size="24%" v-model="drawerOpen" title="分配角色">
     <template #default>
       <el-form>
         <el-form-item label="用户名称">
-          <el-input v-model="tempName" disabled=""></el-input>
+          <el-input v-model="tempUserName" disabled></el-input>
         </el-form-item>
         <el-form-item label="角色列表">
           <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
@@ -103,7 +100,7 @@
       </el-form>
 
       <div class="dialog-footer">
-        <el-button plain type="primary" @click="handleAssign">
+        <el-button plain type="primary" @click="handleRoleSave">
           确认
         </el-button>
       </div>
@@ -133,7 +130,8 @@
   <el-dialog @close="handlerCancel" v-model="resetPwdOpen" title="修改密码" align-center width="400">
     <el-form :model="resetUserPwd" ref="formRef" :rules="rules">
       <el-form-item label="新密码" prop="password" :label-width="100">
-        <el-input type="password" show-password placeholder="新密码" style="width: 90%" v-model="resetUserPwd.password" autocomplete="off" />
+        <el-input type="password" show-password placeholder="新密码" style="width: 90%" v-model="resetUserPwd.password"
+          autocomplete="off" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -157,6 +155,8 @@ const pageSize = ref(10);
 const total = ref(0);
 const updateUserOpen = ref(false);
 const resetPwdOpen = ref(false);
+const drawerOpen = ref(false);
+const tempUserName = ref("");
 //搜索用户名
 const searchUser = ref({
   username: '',
@@ -171,10 +171,6 @@ const resetUserPwd = ref({
 const user = ref({});
 //所有角色数据
 const roleList = ref([]);
-//是否弹出分配角色抽屉
-const isDrawer = ref(false);
-//新增用户弹框
-const isDialog = ref(false);
 //是否全选，默认不
 const checkAll = ref(false);
 //多选默认选中数据
@@ -195,6 +191,13 @@ const getUserList = () => {
     }
   });
 };
+
+//监听分页变化
+const handlePaginationChange = (current, page) => {
+  pageNo.value = current;
+  pageSize.value = page;
+  getUserList();
+}
 
 //获取所有角色数据
 const getAllRoleList = () => {
@@ -244,30 +247,27 @@ const handlerCancel = () => {
   }
 }
 
-//分配角色弹出抽屉
-const tempName = ref("");
-const handleRole = (user) => {
-  tempName.value = user.username;
-  //根据用户id查询用户当前拥有的所有角色
-  queryRoles(user.id).then((res) => {
-    if (res.code === 200 && res.data !== null) {
-      checkedRoles.value = res.data;
+//修改用户
+const handleSaveUser = () => {
+  formRef.value.validate((valid) => {
+    if(valid){
+      saveLoading.value = true;
+      updateUserInfo(user.value).then((res) => {
+        if (res.code === 200) {
+          ElMessage({
+            message: "修改成功",
+            type: "success",
+          });
+          updateUserOpen.value = false;
+          saveLoading.value = false;
+          getUserList();
+        } else {
+          saveLoading.value = false;
+        }
+      })
     }
-  });
-  isDrawer.value = !isDrawer.value;
-};
-
-//将一些共用的值
-const setSomeValue = () => {
-  isDrawer.value = false;
-  tempName.value = "";
-  checkedRoles.value = [];
-};
-
-//抽屉关闭时的回调
-const handleDrawerClose = () => {
-  setSomeValue();
-};
+  })
+}
 
 //全选角色逻辑
 const handleCheckAllChange = (val) => {
@@ -281,20 +281,23 @@ const handleCheckedCitiesChange = (value) => {
     checkedCount > 0 && checkedCount < roleList.value.length;
 };
 
-//处理分配角色逻辑
-const handleAssign = () => {
-  console.log(checkedRoles.value);
-  saveRoles(tempName.value, checkedRoles.value).then((res) => {
+//分配角色
+const handleRoleSave = () => {
+  saveLoading.value = true;
+  saveRoles(tempUserName.value, checkedRoles.value).then((res) => {
     if (res.code === 200) {
+      saveLoading.value = false;
       ElMessage({
         message: "角色分配成功",
         type: "success",
       });
-      getUserList();
-      setSomeValue();
+      drawerOpen.value = false;
+      checkedRoles.value = [];
+    } else {
+      saveLoading.value = false;
     }
-  });
-};
+  })
+}
 
 //删除用户
 const handleRemoveUser = (id) => {
@@ -337,6 +340,26 @@ const handleResetPwd = (id) => {
   })
 }
 
+//分配角色抽屉
+const handleRoleOpen = (item) => {
+  tempUserName.value = item.username;
+  saveLoading.value = true;
+  queryRoles(item.id).then((res) => {
+    if (res.code === 200) {
+      checkedRoles.value = res.data;
+      saveLoading.value = false;
+      drawerOpen.value = true;
+    } else {
+      saveLoading.value = false;
+    }
+  })
+}
+
+const onClose = () => {
+  drawerOpen.value = false;
+  tempUserName.value = '';
+}
+
 const formRef = ref();
 const rules = ref({
   username: [
@@ -371,7 +394,7 @@ const rules = ref({
 </script>
 <style scoped lang="scss">
 .dialog-footer {
-  margin-top: 60px;
+  margin-top: 40px;
   height: 40px;
   width: 100%;
   display: flex;
@@ -391,5 +414,13 @@ const rules = ref({
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+
+.pagination-style {
+  height: 120px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center
 }
 </style>
