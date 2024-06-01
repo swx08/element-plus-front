@@ -29,11 +29,31 @@ export function addRole(data) {
   });
 }
 
+export function updateRole(data) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/update`,
+    method: "PUT",
+    data: data,
+  });
+}
+
 export function savePermission(data,roleId) {
   return request({
     //模板字符串拼接参数
     url: `${PREFIX}/save/permission/${roleId}`,
     method: "POST",
     data: data,
+  });
+}
+
+export function echoRole(id) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/echo`,
+    method: "GET",
+    params: {
+      id,
+    },
   });
 }

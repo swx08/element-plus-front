@@ -54,8 +54,9 @@
           <el-button :icon="Lock" type="primary" link v-has="`btn:role:per`" @click="handleOpenDrawer(scope.row)">
             分配权限
           </el-button>
-          <el-button v-has="`btn:role:update`" link :icon="Edit" type="primary">编辑</el-button>
-          <el-button v-has="`btn:role:remove`" link :icon="Delete" type="danger">删除</el-button>
+          <el-button v-permission="`permission:role:update`" link :icon="Edit" type="primary"
+            @click="handleEchoRole(scope.row.id)">修改</el-button>
+          <el-button v-permission="`permission:role:delete`" link :icon="Delete" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -103,8 +104,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
-import { findRoleList, addRole, savePermission } from "@/api/role";
+import { ref, onMounted } from "vue";
+import { findRoleList, addRole, savePermission, echoRole, updateRole } from "@/api/role";
 import { queryMenuList, queryRoleMenu } from "@/api/menu";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -179,6 +180,16 @@ const handlerAddRoleOpen = () => {
   addRoleOpen.value = true;
 }
 
+//修改角色弹框
+const handleEchoRole = (id) => {
+  echoRole(id).then((res) => {
+    if (res.code === 200) {
+      role.value = res.data;
+      addRoleOpen.value = true;
+    }
+  })
+}
+
 //获取菜单数据 抽屉树形数据
 const getAllMenuData = () => {
   queryMenuList().then((res) => {
@@ -215,17 +226,20 @@ const handleSaveRole = () => {
           }
         })
       } else {
-        // updateRole(role.value).then((res) => {
-        //   if (res.code === 200) {
-        //     message.success("修改成功");
-        //     addRoleOpen.value = false;
-        //     saveLoading.value = false;
-        //     role.value = {};
-        //     getRoleList();
-        //   } else {
-        //     saveLoading.value = false;
-        //   }
-        // })
+        updateRole(role.value).then((res) => {
+          if (res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '修改成功！'
+            })
+            addRoleOpen.value = false;
+            saveLoading.value = false;
+            role.value = {};
+            getRoleList();
+          } else {
+            saveLoading.value = false;
+          }
+        })
       }
     }
   })
