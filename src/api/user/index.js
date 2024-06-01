@@ -78,3 +78,12 @@ export function deleteUser(id) {
     method: "DELETE",
   });
 }
+
+export function resetPwd(data) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/reset/pwd`,
+    method: "POST",
+    data: data,
+  });
+}

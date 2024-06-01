@@ -38,11 +38,11 @@
       <el-table-column prop="email" label="邮箱" width="200" />
       <el-table-column prop="status" label="状态" width="120" />
       <el-table-column prop="createTime" label="创建时间" width="200" />
-      <el-table-column fixed="right" label="选项" width="260">
+      <el-table-column fixed="right" label="选项" width="220">
         <template #default="scope">
-          <el-button :icon="User" type="primary" link v-has="`btn:user:per:role`" @click="handleRole(scope.row)">
+          <!-- <el-button :icon="User" type="primary" link v-has="`btn:user:per:role`" @click="handleRole(scope.row)">
             分配角色
-          </el-button>
+          </el-button> -->
           <el-button v-permission="`permission:user:update`" :icon="Edit" type="primary" link
             @click="handleEchoUser(scope.row.id)">修改</el-button>
           <el-popconfirm title="确认删除该用户？" confirm-button-text="确定" cancel-button-text="取消"
@@ -51,6 +51,26 @@
               <el-button v-permission="`permission:user:delete`" :icon="Delete" type="danger" link>删除</el-button>
             </template>
           </el-popconfirm>
+          <el-dropdown trigger="click" style="padding: 4px 0 0 10px;">
+            <el-button :icon="DArrowRight" type="primary" link>
+              更多
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item>
+                  <el-button v-permission="`permission:user:resetpwd`" :icon="Lock" link type="primary"
+                    @click="handleResetPwdOpen(scope.row.id)">
+                    重置密码
+                  </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button :icon="Position" link type="primary">
+                    分配角色
+                  </el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
@@ -91,32 +111,42 @@
   </el-drawer>
 
   <!-- 修改用户弹框 -->
-  <div>
-    <el-dialog @close="handlerCancel" v-model="updateUserOpen" title="修改用户" width="500">
-      <el-form :model="user" ref="formRef" :rules="rules">
-        <el-form-item label="用户名称" prop="username" :label-width="140">
-          <el-input style="width: 80%" v-model="user.username" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone" :label-width="140">
-          <el-input style="width: 80%" v-model="user.phone" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email" :label-width="140">
-          <el-input style="width: 80%" v-model="user.email" autocomplete="off" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button type="primary" @click="handleSaveUser"> 确认 </el-button>
-        <el-button @click="handlerCancel">取消</el-button>
-      </template>
-    </el-dialog>
-  </div>
-</template>
+  <el-dialog @close="handlerCancel" v-model="updateUserOpen" title="修改用户" width="500">
+    <el-form :model="user" ref="formRef" :rules="rules">
+      <el-form-item label="用户名称" prop="username" :label-width="140">
+        <el-input style="width: 80%" v-model="user.username" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="手机号" prop="phone" :label-width="140">
+        <el-input style="width: 80%" v-model="user.phone" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="邮箱" prop="email" :label-width="140">
+        <el-input style="width: 80%" v-model="user.email" autocomplete="off" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button type="primary" @click="handleSaveUser"> 确认 </el-button>
+      <el-button @click="handlerCancel">取消</el-button>
+    </template>
+  </el-dialog>
 
+  <!-- 重置密码弹框 -->
+  <el-dialog @close="handlerCancel" v-model="resetPwdOpen" title="修改密码" align-center width="400">
+    <el-form :model="resetUserPwd" ref="formRef" :rules="rules">
+      <el-form-item label="新密码" prop="password" :label-width="100">
+        <el-input type="password" show-password placeholder="新密码" style="width: 90%" v-model="resetUserPwd.password" autocomplete="off" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button type="primary" @click="handleResetPwd"> 确认 </el-button>
+      <el-button @click="handlerCancel">取消</el-button>
+    </template>
+  </el-dialog>
+</template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo, deleteUser } from "@/api/user";
+import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo, deleteUser, resetPwd } from "@/api/user";
 import { queryRoleList } from "@/api/role";
-import { User, Edit, Delete } from "@element-plus/icons-vue";
+import { User, Edit, Delete, DArrowRight, Lock, Position } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 
 //表格数据
@@ -275,6 +305,34 @@ const handleRemoveUser = (id) => {
         type: "success",
       });
       getUserList();
+    }
+  })
+}
+
+//重置密码
+const handleResetPwdOpen = (id) => {
+  resetUserPwd.value.id = id;
+  resetPwdOpen.value = true;
+}
+
+//重置密码
+const handleResetPwd = (id) => {
+  formRef.value.validate((valid) => {
+    if(valid){
+      saveLoading.value = true;
+      resetPwd(resetUserPwd.value).then((res) => {
+        if (res.code === 200) {
+          ElMessage({
+            message: "密码重置成功",
+            type: "success",
+          })
+          resetPwdOpen.value = false;
+          saveLoading.value = false;
+          resetUserPwd.value = {};
+        } else {
+          saveLoading.value = false;
+        }
+      })
     }
   })
 }
