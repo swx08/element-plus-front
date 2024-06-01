@@ -81,6 +81,8 @@ let useUserStore = defineStore("User", {
       this.avatar = "";
       //删除本地token数据
       REMOVE_TOKEN();
+      //跳转登录页
+      router.push({ name: "Login" });
     },
   },
 });
