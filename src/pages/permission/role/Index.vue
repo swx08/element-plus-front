@@ -56,7 +56,12 @@
           </el-button>
           <el-button v-permission="`permission:role:update`" link :icon="Edit" type="primary"
             @click="handleEchoRole(scope.row.id)">修改</el-button>
-          <el-button v-permission="`permission:role:delete`" link :icon="Delete" type="danger">删除</el-button>
+          <el-popconfirm title="确认删除该角色？" confirm-button-text="确定" cancel-button-text="取消"
+            @confirm="handleRemoveRole(scope.row.id)" width="160px">
+            <template #reference>
+              <el-button v-permission="`permission:role:delete`" link :icon="Delete" type="danger">删除</el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -105,7 +110,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { findRoleList, addRole, savePermission, echoRole, updateRole } from "@/api/role";
+import { findRoleList, addRole, savePermission, echoRole, updateRole, removeRole } from "@/api/role";
 import { queryMenuList, queryRoleMenu } from "@/api/menu";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -208,7 +213,7 @@ const handlerCancel = () => {
 //新增、修改角色
 const handleSaveRole = () => {
   formRef.value.validate((valid) => {
-    if(valid){
+    if (valid) {
       saveLoading.value = true;
       if (role.value.id === undefined) {
         addRole(role.value).then((res) => {
@@ -281,6 +286,19 @@ const handleSavePermission = () => {
     }
   });
 };
+
+//删除角色
+const handleRemoveRole = (id) => {
+  removeRole(id).then((res) => {
+    if (res.code === 200) {
+      ElMessage({
+        type: 'success',
+        message: '删除成功！'
+      })
+      getRoleList();
+    }
+  })
+}
 
 const formRef = ref();
 const rules = ref({

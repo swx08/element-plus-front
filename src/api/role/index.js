@@ -57,3 +57,14 @@ export function echoRole(id) {
     },
   });
 }
+
+export function removeRole(id) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/delete`,
+    method: "DELETE",
+    params: {
+      id,
+    },
+  });
+}
