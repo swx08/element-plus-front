@@ -44,7 +44,7 @@
       <el-table-column prop="code" label="角色标识" width="180" />
       <el-table-column prop="status" label="状态" width="160">
         <template #default="scope">
-          <el-switch :disabled="scope.row.code === 'admin'" v-model="scope.row.checked" inline-prompt
+          <el-switch @change="handleChangeStatus(scope.row.id)" :disabled="scope.row.code === 'admin'" v-model="scope.row.checked" inline-prompt
             :active-icon="Check" :inactive-icon="Close" />
         </template>
       </el-table-column>
@@ -110,7 +110,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { findRoleList, addRole, savePermission, echoRole, updateRole, removeRole } from "@/api/role";
+import { findRoleList, addRole, savePermission, echoRole, updateRole, removeRole, updateRoleStatus } from "@/api/role";
 import { queryMenuList, queryRoleMenu } from "@/api/menu";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -286,6 +286,19 @@ const handleSavePermission = () => {
     }
   });
 };
+
+//修改角色状态
+const handleChangeStatus = (id) => {
+  updateRoleStatus(id).then((res) => {
+    if (res.code === 200) {
+      ElMessage({
+        type: 'success',
+        message: '角色状态修改成功！'
+      })
+      getRoleList();
+    }
+  })
+}
 
 //删除角色
 const handleRemoveRole = (id) => {

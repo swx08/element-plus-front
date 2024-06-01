@@ -47,6 +47,14 @@ export function savePermission(data,roleId) {
   });
 }
 
+export function updateRoleStatus(id) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/update/status/${id}`,
+    method: "PUT",
+  });
+}
+
 export function echoRole(id) {
   return request({
     //模板字符串拼接参数
