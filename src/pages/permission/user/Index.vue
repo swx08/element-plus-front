@@ -36,7 +36,12 @@
       <el-table-column fixed prop="username" label="用户名称" width="160" />
       <el-table-column prop="phone" label="手机号" width="180" />
       <el-table-column prop="email" label="邮箱" width="200" />
-      <el-table-column prop="status" label="状态" width="120" />
+      <el-table-column prop="status" label="状态" width="120">
+        <template #default="scope">
+          <el-switch @change="handleChangeStatus(scope.row.id)"
+            v-model="scope.row.checked" inline-prompt :active-icon="Check" :inactive-icon="Close" />
+        </template>
+      </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="200" />
       <el-table-column fixed="right" label="选项" width="220">
         <template #default="scope">
@@ -142,9 +147,9 @@
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo, deleteUser, resetPwd } from "@/api/user";
+import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo, deleteUser, resetPwd, updateUserStatus } from "@/api/user";
 import { queryRoleList } from "@/api/role";
-import { User, Edit, Delete, DArrowRight, Lock, Position } from "@element-plus/icons-vue";
+import { User, Edit, Delete, DArrowRight, Lock, Position,Check,Close } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 
 //表格数据
@@ -358,6 +363,18 @@ const handleRoleOpen = (item) => {
 const onClose = () => {
   drawerOpen.value = false;
   tempUserName.value = '';
+}
+
+//修改用户状态
+const handleChangeStatus = (id) => {
+  updateUserStatus(id).then((res) => {
+    if (res.code === 200) {
+      ElMessage({
+        message: "用户状态已修改",
+        type: "success",
+      });
+    }
+  })
 }
 
 const formRef = ref();

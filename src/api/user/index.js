@@ -54,6 +54,14 @@ export function updateUserInfo(data) {
   });
 }
 
+export function updateUserStatus(id) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/update/status/${id}`,
+    method: "PUT",
+  });
+}
+
 export function saveRoles(username, data) {
   return request({
     //模板字符串拼接参数
