@@ -114,6 +114,26 @@ export const asyncRoutes = [
     },
     children: [
       {
+        path: "/system/dict",
+        name: "Dict",
+        component: () => import("@/pages/system/dict/Index.vue"),
+        meta: {
+          title: "字典管理",
+          hidden: false,
+          icon: "Message",
+        },
+      },
+      {
+        path: "/system/dict_data",
+        name: "DictData",
+        component: () => import("@/pages/system/dict_data/Index.vue"),
+        meta: {
+          title: "字典数据",
+          hidden: true,
+          icon: "Message",
+        },
+      },
+      {
         path: "/system/notice",
         name: "Notice",
         component: () => import("@/pages/system/notice/Index.vue"),

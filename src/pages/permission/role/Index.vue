@@ -44,7 +44,8 @@
       <el-table-column prop="code" label="角色标识" width="180" />
       <el-table-column prop="status" label="状态" width="160">
         <template #default="scope">
-          <el-switch @change="handleChangeStatus(scope.row.id)" :disabled="scope.row.code === 'admin'"
+          <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+            @change="handleChangeStatus(scope.row.id)" :disabled="scope.row.code === 'admin'"
             v-model="scope.row.checked" inline-prompt :active-icon="Check" :inactive-icon="Close" />
         </template>
       </el-table-column>

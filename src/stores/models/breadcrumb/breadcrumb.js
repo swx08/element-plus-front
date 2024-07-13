@@ -19,6 +19,9 @@ export const useBreadcrumbStore = defineStore("breadcrumb", () => {
     },
   ]);
 
+  //当前激活的标签页
+  const activeTag = ref("/");
+
   //退出时清空数据
   const removeBreadcrumb = () => {
     breadcrumb.value = null;
@@ -66,5 +69,6 @@ export const useBreadcrumbStore = defineStore("breadcrumb", () => {
     setBreadcrumb,
     clearTags,
     removeBreadcrumb,
+    activeTag,
   };
 });

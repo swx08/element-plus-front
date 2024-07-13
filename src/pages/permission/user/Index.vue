@@ -38,8 +38,9 @@
       <el-table-column prop="email" label="邮箱" width="200" />
       <el-table-column prop="status" label="状态" width="120">
         <template #default="scope">
-          <el-switch @change="handleChangeStatus(scope.row.id)" v-model="scope.row.checked" inline-prompt
-            :active-icon="Check" :inactive-icon="Close" />
+          <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+            @change="handleChangeStatus(scope.row.id)" v-model="scope.row.checked" inline-prompt :active-icon="Check"
+            :inactive-icon="Close" />
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="200" />

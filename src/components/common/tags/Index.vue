@@ -30,6 +30,7 @@ tags.value = breadcrumbStore.tagList;
 //点击面包屑切换路由
 const changRouter = (item) => {
   router.push(item.path);
+  breadcrumbStore.activeTag = item.path;
 };
 
 //移除面包屑逻辑
@@ -41,8 +42,10 @@ const handleClose = (item, index) => {
     return;
   }
   if (index === length) {
+    breadcrumbStore.activeTag = tags.value[index - 1].path;
     router.push({ name: tags.value[index - 1].name });
   } else {
+    breadcrumbStore.activeTag = tags.value[index].path;
     router.push({ name: tags.value[index].name });
   }
 };
