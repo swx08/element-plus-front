@@ -23,8 +23,8 @@
 
         <div class="right-btn">
           <el-space :size="40">
-            <el-button type="primary" v-permission="`permission:role:query`" @click="handleSearch">查询</el-button>
-            <el-button @click="handleReset" v-permission="`permission:role:reset`">重置</el-button>
+            <el-button type="primary" @click="handleSearch">查询</el-button>
+            <el-button @click="handleReset">重置</el-button>
           </el-space>
         </div>
       </div>
@@ -33,12 +33,12 @@
     <!-- 新增角色区域 -->
     <div style="height: 60px;">
       <el-space :size="20">
-        <el-button type="primary" :icon="CirclePlus" v-permission="`permission:role:add`" @click="handlerAddDictOpen">
+        <el-button type="primary" :icon="CirclePlus" v-permission="`system:dict_data:add`" @click="handlerAddDictOpen">
           新增
         </el-button>
         <el-popconfirm title="确认批量删除？" confirm-button-text="确定" cancel-button-text="取消" @confirm="handlerBatchDelete">
           <template #reference>
-            <el-button :disabled="disabled" type="danger" :icon="Delete" v-permission="`permission:user:delete`">
+            <el-button :disabled="disabled" type="danger" :icon="Delete" v-permission="`system:dict_data:delete`">
               批量删除
             </el-button>
           </template>
@@ -71,12 +71,12 @@
       <el-table-column prop="createTime" label="创建时间" width="220" />
       <el-table-column fixed="right" label="选项" width="180">
         <template #default="scope">
-          <el-button v-permission="`permission:role:update`" link :icon="Edit" type="primary"
+          <el-button v-permission="`system:dict_data:update`" link :icon="Edit" type="primary"
             @click="handleEchoDict(scope.row.id)">修改</el-button>
           <el-popconfirm title="确认删除该字典数据？" confirm-button-text="确定" cancel-button-text="取消"
             @confirm="handleRemoveDict(scope.row.id)" width="160px">
             <template #reference>
-              <el-button v-permission="`permission:role:delete`" link :icon="Delete" type="danger">删除</el-button>
+              <el-button v-permission="`system:dict_data:delete`" link :icon="Delete" type="danger">删除</el-button>
             </template>
           </el-popconfirm>
         </template>

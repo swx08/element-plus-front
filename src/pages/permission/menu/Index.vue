@@ -41,7 +41,7 @@
     </div>
 
     <!-- 数据展示区 -->
-    <el-table :data="menuData" v-loading="loading" height="50vh" style="width: 100%" row-key="id">
+    <el-table :data="menuData" v-loading="loading" height="55vh" style="width: 100%" row-key="id">
       <el-table-column fixed prop="id" label="菜单编号" width="140" />
       <el-table-column fixed prop="name" label="组件名称" width="160" />
       <el-table-column prop="title" label="菜单名称" width="160" />

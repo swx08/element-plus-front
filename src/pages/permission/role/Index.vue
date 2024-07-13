@@ -38,7 +38,7 @@
         </el-button>
         <el-popconfirm title="确认批量删除？" confirm-button-text="确定" cancel-button-text="取消" @confirm="handlerBatchDelete">
           <template #reference>
-            <el-button :disabled="disabled" type="danger" :icon="Delete" v-permission="`permission:user:delete`">
+            <el-button :disabled="disabled" type="danger" :icon="Delete" v-permission="`permission:role:delete`">
               批量删除
             </el-button>
           </template>

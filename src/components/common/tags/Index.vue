@@ -3,7 +3,7 @@
   <div class="tags">
     <el-tag v-for="(item, index) in tags" :key="index" size="large"
       :effect="route.name === item.name ? 'dark' : 'light'" :closable="item.name !== 'Home'" @click="changRouter(item)"
-      @close="handleClose(item, index)" class="el_tags" :color="route.name === item.name ? '#4F8DFF' : '#fff'">
+      @close="handleClose(item, index)" class="el_tags" :color="route.name === item.name ? '#4F8DFF' : ''">
       {{ item.meta.title }}
     </el-tag>
   </div>
