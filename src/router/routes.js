@@ -120,7 +120,7 @@ export const asyncRoutes = [
         meta: {
           title: "字典管理",
           hidden: false,
-          icon: "Message",
+          icon: "SetUp",
         },
       },
       {
@@ -130,7 +130,7 @@ export const asyncRoutes = [
         meta: {
           title: "字典数据",
           hidden: true,
-          icon: "Message",
+          icon: "",
         },
       },
       {

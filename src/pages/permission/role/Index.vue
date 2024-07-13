@@ -31,13 +31,23 @@
     </template>
 
     <!-- 新增角色区域 -->
-    <div style="height: 60px;">
-      <el-button type="primary" :icon="CirclePlus" v-permission="`permission:role:add`" @click="handlerAddRoleOpen">
-        新增
-      </el-button>
+    <div style="height: 60px">
+      <el-space :size="20">
+        <el-button type="primary" :icon="CirclePlus" v-permission="`permission:role:add`" @click="handlerAddRoleOpen">
+          新增
+        </el-button>
+        <el-popconfirm title="确认批量删除？" confirm-button-text="确定" cancel-button-text="取消" @confirm="handlerBatchDelete">
+          <template #reference>
+            <el-button :disabled="disabled" type="danger" :icon="Delete" v-permission="`permission:user:delete`">
+              批量删除
+            </el-button>
+          </template>
+        </el-popconfirm>
+      </el-space>
     </div>
 
-    <el-table :data="tableData" v-loading="loading" style="width: 100%">
+    <el-table @selection-change="handleSelectionChange" :data="tableData" v-loading="loading" style="width: 100%">
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="id" label="角色编号" width="140" />
       <el-table-column prop="name" label="角色名称" width="180" />
       <el-table-column prop="code" label="角色标识" width="180" />
@@ -112,7 +122,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { findRoleList, addRole, savePermission, echoRole, updateRole, removeRole, updateRoleStatus } from "@/api/role";
+import { findRoleList, addRole, savePermission, echoRole, updateRole, removeRole, updateRoleStatus, batchDelete } from "@/api/role";
 import { queryMenuList, queryRoleMenuList } from "@/api/menu";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -149,6 +159,7 @@ const roleName = ref("");
 const role = ref({});
 const roleId = ref(null);
 const statusData = ref([]);
+const disabled = ref(true);
 
 onMounted(() => {
   getRoleList();
@@ -339,7 +350,7 @@ const handleChangeStatus = (id) => {
   })
 }
 
-//删除角色
+//单选删除角色
 const handleRemoveRole = (id) => {
   removeRole(id).then((res) => {
     if (res.code === 200) {
@@ -347,6 +358,30 @@ const handleRemoveRole = (id) => {
         type: 'success',
         message: '删除成功！'
       })
+      getRoleList();
+    }
+  })
+}
+
+//批量选择
+var roleIds = [];
+const handleSelectionChange = (roles) => {
+  if (roles.length > 0) {
+    roleIds = roles.map((item) => item.id);
+    disabled.value = false;
+  } else {
+    disabled.value = true;
+  }
+}
+
+//批量删除角色
+const handlerBatchDelete = () => {
+  batchDelete(roleIds).then((res) => {
+    if (res.code === 200) {
+      ElMessage({
+        message: "删除成功",
+        type: "success",
+      });
       getRoleList();
     }
   })

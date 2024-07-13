@@ -35,12 +35,22 @@
 
     <!-- 新增角色区域 -->
     <div style="height: 60px;">
-      <el-button type="primary" :icon="CirclePlus" v-permission="`permission:role:add`" @click="handlerAddDictOpen">
-        新增
-      </el-button>
+      <el-space :size="20">
+        <el-button type="primary" :icon="CirclePlus" v-permission="`permission:role:add`" @click="handlerAddDictOpen">
+          新增
+        </el-button>
+        <el-popconfirm title="确认批量删除？" confirm-button-text="确定" cancel-button-text="取消" @confirm="handlerBatchDelete">
+          <template #reference>
+            <el-button :disabled="disabled" type="danger" :icon="Delete" v-permission="`permission:user:delete`">
+              批量删除
+            </el-button>
+          </template>
+        </el-popconfirm>
+      </el-space>
     </div>
 
-    <el-table :data="tableData" v-loading="loading" style="width: 100%">
+    <el-table @selection-change="handleSelectionChange" :data="tableData" v-loading="loading" style="width: 100%">
+      <el-table-column type="selection" width="55" />
       <el-table-column fixed prop="id" label="字典编号" width="140" />
       <el-table-column fixed prop="name" label="字典名称" width="180" />
       <el-table-column prop="type" label="字典类型" width="180">
@@ -105,7 +115,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { addDictType, findDictList, queryAllTypeData, updateDictStatus, removeDict, echoDict, updateDict } from "@/api/dict";
+import { addDictType, findDictList, queryAllTypeData, updateDictStatus, removeDict, echoDict, updateDict, batchDelete } from "@/api/dict";
 import { ElMessage } from "element-plus";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import router from "@/router";
@@ -129,6 +139,7 @@ const saveLoading = ref(false);
 const loading = ref(true);
 const typeData = ref([]);
 const statusData = ref([]);
+const disabled = ref(true);
 
 onMounted(() => {
   getDictList();
@@ -265,6 +276,30 @@ const handleRemoveDict = (id) => {
         type: 'success',
         message: '删除成功！'
       })
+      getDictList();
+    }
+  })
+}
+
+//批量选择
+var dictIds = [];
+const handleSelectionChange = (dicts) => {
+  if (dicts.length > 0) {
+    dictIds = dicts.map((item) => item.id);
+    disabled.value = false;
+  } else {
+    disabled.value = true;
+  }
+}
+
+//批量删除字典
+const handlerBatchDelete = () => {
+  batchDelete(dictIds).then((res) => {
+    if (res.code === 200) {
+      ElMessage({
+        message: "删除成功",
+        type: "success",
+      });
       getDictList();
     }
   })
