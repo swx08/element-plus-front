@@ -260,7 +260,7 @@ const handleRemoveDict = (id) => {
 
 //跳转到字典数据页面
 const goToDictData = (item) => {
-  router.push({ name: 'DictData', query: { id: item.id, name: item.name } });
+  router.push({ name: 'DictData', query: { id: item.id,type: item.type } });
 }
 
 //修改字典数据回显

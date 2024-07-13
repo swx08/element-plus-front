@@ -6,10 +6,8 @@
       <div style="display: flex;">
         <el-row :gutter="10" class="a-row-search">
           <el-col :lg="8">
-            <span>字典名称：</span>
-            <el-select v-model="searchDict.name" placeholder="字典名称" style="width: 200px">
-              <el-option v-for="(item, index) in dictName" :key="index" :label="item" :value="item"></el-option>
-            </el-select>
+            <span>字典类型：</span>
+            <el-input style="width: 200px" v-model="searchDict.type" placeholder="字典类型"></el-input>
           </el-col>
           <el-col :lg="8">
             <span>字典标签：</span>
@@ -45,12 +43,12 @@
       <el-table-column fixed prop="type" label="字典类型" width="180" />
       <el-table-column prop="label" label="字典标签" width="180">
         <template #default="scope">
-          <el-link @click="goToDictData(scope.row)" :underline="false" type="primary">{{ scope.row.type }}</el-link>
+          <el-tag>{{ scope.row.label }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="value" label="字典键值" width="180">
         <template #default="scope">
-          <el-link @click="goToDictData(scope.row)" :underline="false" type="primary">{{ scope.row.type }}</el-link>
+          <el-tag type="warning">{{ scope.row.value }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="状态" width="160">
@@ -66,7 +64,7 @@
         <template #default="scope">
           <el-button v-permission="`permission:role:update`" link :icon="Edit" type="primary"
             @click="handleEchoDict(scope.row.id)">修改</el-button>
-          <el-popconfirm title="确认删除该字典类型？" confirm-button-text="确定" cancel-button-text="取消"
+          <el-popconfirm title="确认删除该字典数据？" confirm-button-text="确定" cancel-button-text="取消"
             @confirm="handleRemoveDict(scope.row.id)" width="160px">
             <template #reference>
               <el-button v-permission="`permission:role:delete`" link :icon="Delete" type="danger">删除</el-button>
@@ -84,20 +82,20 @@
   </el-card>
 
   <!-- 新增弹框 -->
-  <el-dialog @close="handlerCancel" v-model="addDictOpen" :title="dictType.id === undefined ? '添加字典' : '修改字典'"
+  <el-dialog @close="handlerCancel" v-model="addDictOpen" :title="dictData.id === undefined ? '添加字典' : '修改字典'"
     width="500">
-    <el-form :model="dictType" ref="formRef" :rules="rules">
-      <el-form-item label="字典名称" prop="name" :error="dictTypeErr.name" :label-width="140">
-        <el-input disabled placeholder="字典名称" style="width: 80%" v-model="dictType.name" autocomplete="off" />
+    <el-form :model="dictData" ref="formRef" :rules="rules">
+      <el-form-item label="字典类型" prop="type" :error="dictDataErr.type" :label-width="140">
+        <el-input disabled placeholder="字典类型" style="width: 80%" v-model="dictData.type" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="字典标签" prop="type" :error="dictTypeErr.type" :label-width="140">
-        <el-input placeholder="字典标签" style="width: 80%" v-model="dictType.type" autocomplete="off" />
+      <el-form-item label="字典标签" prop="label" :error="dictDataErr.label" :label-width="140">
+        <el-input placeholder="字典标签" style="width: 80%" v-model="dictData.label" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="字典键值" prop="type" :error="dictTypeErr.type" :label-width="140">
-        <el-input type="number" placeholder="字典键值" style="width: 80%" v-model="dictType.type" autocomplete="off" />
+      <el-form-item label="字典键值" prop="value" :error="dictDataErr.value" :label-width="140">
+        <el-input type="number" placeholder="字典键值" style="width: 80%" v-model="dictData.value" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="备注" prop="remark" :error="dictTypeErr.remark" :label-width="140">
-        <el-input :rows="4" type="textarea" placeholder="备注" style="width: 80%" v-model="dictType.remark"
+      <el-form-item label="备注" prop="remark" :error="dictDataErr.remark" :label-width="140">
+        <el-input :rows="4" type="textarea" placeholder="备注" style="width: 80%" v-model="dictData.remark"
           autocomplete="off" />
       </el-form-item>
     </el-form>
@@ -113,7 +111,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { addDictType, findDictList, queryAllTypeData, updateDictStatus, removeDict, echoDict, updateDict } from "@/api/dict";
+import { addDictData, updateDict,findDictList, updateDictStatus, removeDict, echoDict, } from "@/api/dict_data";
 import { ElMessage } from "element-plus";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import router from "@/router";
@@ -127,22 +125,21 @@ const pageSize = ref(10);
 const total = ref(0);
 const addDictOpen = ref(false);
 const searchDict = ref({
-  name: "",
   type: "",
+  label: "",
   status: null
 });
-const dictType = ref({});
-const dictTypeErr = ref({});
+const dictData = ref({
+  type: ''
+});
+const dictDataErr = ref({});
 const saveLoading = ref(false);
 const loading = ref(true);
 const typeData = ref([]);
-searchDict.value.name = route.query.name;
-const tempName = ref(route.query.name);
-const dictName = ref([tempName.value, "全部"]);
+searchDict.value.type = route.query.type;
 
 onMounted(() => {
   getDictList();
-  getDictType();
 });
 
 //获取字典类型分页数据
@@ -159,15 +156,6 @@ const getDictList = () => {
   });
 };
 
-//查询字段类型数据
-const getDictType = () => {
-  queryAllTypeData().then((res) => {
-    if (res.code === 200) {
-      typeData.value = res.data;
-    }
-  })
-}
-
 //监听分页变化
 const handlePaginationChange = (current, page) => {
   pageNo.value = current;
@@ -178,7 +166,7 @@ const handlePaginationChange = (current, page) => {
 //重置
 const handleReset = () => {
   searchDict.value = {
-    name: "",
+    label: "",
     type: "",
     status: null
   }
@@ -196,10 +184,11 @@ const handleSearch = () => {
 
 //新增字典 
 const handlerAddDictOpen = () => {
-  dictType.value = {};
+  dictData.value.type = route.query.type;
   addDictOpen.value = true;
 }
 const handlerCancel = () => {
+  dictData.value = {};
   addDictOpen.value = false;
 }
 
@@ -208,8 +197,8 @@ const handleSaveDict = () => {
   formRef.value.validate((valid) => {
     if (valid) {
       saveLoading.value = true;
-      if (dictType.value.id === undefined) {
-        addDictType(dictType.value).then((res) => {
+      if (dictData.value.id === undefined) {
+        addDictData(dictData.value).then((res) => {
           if (res.code === 200) {
             ElMessage({
               type: 'success',
@@ -217,13 +206,13 @@ const handleSaveDict = () => {
             });
             getDictList();
             addDictOpen.value = false;
-            dictType.value = {};
+            dictData.value = {};
           } else {
-            dictTypeErr.value = res.data;
+            dictDataErr.value = res.data;
           }
         });
       } else {
-        updateDict(dictType.value).then((res) => {
+        updateDict(dictData.value).then((res) => {
           if (res.code === 200) {
             ElMessage({
               type: 'success',
@@ -231,11 +220,11 @@ const handleSaveDict = () => {
             })
             getDictList();
             addDictOpen.value = false;
-            dictType.value = {};
+            dictData.value = {};
           } else {
             saveLoading.value = false;
             if (res.data !== null) {
-              dictTypeErr.value = res.data;
+              dictDataErr.value = res.data;
             }
           }
         })
@@ -279,7 +268,7 @@ const goToDictData = (item) => {
 const handleEchoDict = (id) => {
   echoDict(id).then((res) => {
     if (res.code === 200) {
-      dictType.value = res.data;
+      dictData.value = res.data;
       addDictOpen.value = true;
     }
   })
@@ -287,10 +276,10 @@ const handleEchoDict = (id) => {
 
 const formRef = ref();
 const rules = ref({
-  name: [
+  label: [
     {
       required: true,
-      message: '请输入字典名称',
+      message: '请输入字典标签',
       trigger: 'change',
     },
   ],
@@ -298,6 +287,13 @@ const rules = ref({
     {
       required: true,
       message: '请输入字典类型',
+      trigger: 'change',
+    },
+  ],
+  value: [
+    {
+      required: true,
+      message: '请输入字典键值',
       trigger: 'change',
     },
   ],
