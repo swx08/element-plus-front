@@ -96,6 +96,14 @@ export function deleteUser(id) {
   });
 }
 
+export function batchDelete(ids) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/batch/delete/${ids}`,
+    method: "DELETE"
+  });
+}
+
 export function resetPwd(data) {
   return request({
     //模板字符串拼接参数

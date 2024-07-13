@@ -17,10 +17,9 @@
             </el-select>
           </el-col>
           <el-col :lg="8">
-            <span>菜单状态：</span>
-            <el-select v-model="searchMenu.status" placeholder="菜单状态" style="width: 200px">
-              <el-option label="开启" :value="1">开启</el-option>
-              <el-option label="关闭" :value="0">关闭</el-option>
+            <span>状态：</span>
+            <el-select v-model="searchMenu.status" placeholder="状态" style="width: 200px">
+              <el-option v-for="(item, index) in statusData" :key="index" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
         </el-row>
@@ -133,7 +132,9 @@ import { ref, onMounted } from "vue";
 import { queryMenuList, queryMenuListByLike, addMenu, echoMenu, updateMenu, removeMenu } from "@/api/menu";
 import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue';
 import { verifyMenuName } from "@/utils/regexutils";
-import { ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus';
+import { queryDictLabel } from "@/api/dict_data";
+import { MENU_CONSTANT } from "@/constant/dictType.js";
 
 const saveLoading = ref(false);
 const loading = ref(true);
@@ -149,11 +150,13 @@ const searchMenu = ref({
   type: null,
   status: null
 });
+const statusData = ref([]);
 
 //菜单展示数据
 const menuData = ref([]);
 onMounted(() => {
   getAllMenuData();
+  getDictTypeStatus();
 })
 
 //获取菜单数据 抽屉树形数据
@@ -174,6 +177,15 @@ const getMenuListByLike = () => {
     if (res.code === 200) {
       menuData.value = res.data;
       loading.value = false;
+    }
+  })
+}
+
+//查询字典状态
+const getDictTypeStatus = () => {
+  queryDictLabel(MENU_CONSTANT).then((res) => {
+    if (res.code === 200) {
+      statusData.value = res.data;
     }
   })
 }

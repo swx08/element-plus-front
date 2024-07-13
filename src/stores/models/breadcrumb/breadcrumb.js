@@ -20,7 +20,7 @@ export const useBreadcrumbStore = defineStore("breadcrumb", () => {
   ]);
 
   //当前激活的标签页
-  const activeTag = ref("/");
+  const activeTag = ref("/home");
 
   //退出时清空数据
   const removeBreadcrumb = () => {

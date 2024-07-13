@@ -14,10 +14,9 @@
             <el-input style="width: 200px" v-model="searchUser.phone" placeholder="手机号码"></el-input>
           </el-col>
           <el-col :lg="8">
-            <span>用户状态：</span>
-            <el-select v-model="searchUser.status" placeholder="用户状态" style="width: 200px">
-              <el-option label="开启" :value="1">开启</el-option>
-              <el-option label="关闭" :value="0">关闭</el-option>
+            <span>状态：</span>
+            <el-select v-model="searchUser.status" placeholder="状态" style="width: 200px">
+              <el-option v-for="(item, index) in statusData" :key="index" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
         </el-row>
@@ -31,7 +30,20 @@
       </div>
     </template>
 
-    <el-table :data="tableData" v-loading="loading" style="width: 100%">
+    <!-- 批量删除 -->
+    <div style="height: 60px;">
+      <el-popconfirm title="确认批量删除？" confirm-button-text="确定" cancel-button-text="取消"
+        @confirm="handlerBatchDelete">
+        <template #reference>
+          <el-button :disabled="disabled" type="danger" :icon="Delete" v-permission="`permission:user:delete`">
+            批量删除
+          </el-button>
+        </template>
+      </el-popconfirm>
+    </div>
+
+    <el-table @selection-change="handleSelectionChange" :data="tableData" v-loading="loading" style="width: 100%">
+      <el-table-column type="selection" width="55" />
       <el-table-column fixed prop="id" label="用户编号" width="120" />
       <el-table-column fixed prop="username" label="用户名称" width="160" />
       <el-table-column prop="phone" label="手机号" width="180" />
@@ -148,10 +160,12 @@
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo, deleteUser, resetPwd, updateUserStatus } from "@/api/user";
+import { findUserList, queryRoles, saveRoles, queryEchoUserInfo, updateUserInfo, deleteUser, resetPwd, updateUserStatus, batchDelete } from "@/api/user";
 import { queryRoleList } from "@/api/role";
 import { User, Edit, Delete, DArrowRight, Lock, Position,Check,Close } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import { queryDictLabel } from "@/api/dict_data";
+import { USER_CONSTANT } from "@/constant/dictType.js";
 
 //表格数据
 const saveLoading = ref(false);
@@ -183,10 +197,13 @@ const checkAll = ref(false);
 //多选默认选中数据
 const checkedRoles = ref([]);
 const isIndeterminate = ref(false);
+const statusData = ref([]);
+const disabled = ref(true);
 
 onMounted(() => {
   getUserList();
   getAllRoleList();
+  getDictTypeStatus();
 });
 
 //获取用户分页数据
@@ -207,6 +224,15 @@ const handlePaginationChange = (current, page) => {
   pageNo.value = current;
   pageSize.value = page;
   getUserList();
+}
+
+//查询字典状态
+const getDictTypeStatus = () => {
+  queryDictLabel(USER_CONSTANT).then((res) => {
+    if (res.code === 200) {
+      statusData.value = res.data;
+    }
+  })
 }
 
 //获取所有角色数据
@@ -309,9 +335,34 @@ const handleRoleSave = () => {
   })
 }
 
-//删除用户
+//单选删除用户
 const handleRemoveUser = (id) => {
   deleteUser(id).then((res) => {
+    if (res.code === 200) {
+      ElMessage({
+        message: "删除成功",
+        type: "success",
+      });
+      getUserList();
+    }
+  })
+}
+
+//批量选择
+var userIds = [];
+const handleSelectionChange = (users) => {
+  if (users.length > 0) {
+    //过滤出已选中的用户id
+    userIds = users.map((item) => item.id);
+    disabled.value = false;
+  } else {
+    disabled.value = true;
+  }
+}
+
+//批量删除用户
+const handlerBatchDelete = () => {
+  batchDelete(userIds).then((res) => {
     if (res.code === 200) {
       ElMessage({
         message: "删除成功",

@@ -46,6 +46,17 @@ export function echoDict(id) {
   });
 }
 
+export function queryDictLabel(type) {
+  return request({
+    //模板字符串拼接参数
+    url: `${PREFIX}/query/label`,
+    method: "GET",
+    params: {
+      type: type,
+    },
+  });
+}
+
 export function removeDict(id) {
   return request({
     //模板字符串拼接参数

@@ -19,8 +19,7 @@
           <el-col :lg="8">
             <span>状态：</span>
             <el-select v-model="searchDict.status" placeholder="状态" style="width: 200px">
-              <el-option label="开启" :value="1">开启</el-option>
-              <el-option label="关闭" :value="0">关闭</el-option>
+              <el-option v-for="(item, index) in statusData" :key="index" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
         </el-row>
@@ -110,6 +109,8 @@ import { addDictType, findDictList, queryAllTypeData, updateDictStatus, removeDi
 import { ElMessage } from "element-plus";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import router from "@/router";
+import { queryDictLabel } from "@/api/dict_data";
+import { DICT_TYPE_CONSTANT } from "@/constant/dictType.js";
 
 //表格数据
 const tableData = ref([]);
@@ -127,10 +128,12 @@ const dictTypeErr = ref({});
 const saveLoading = ref(false);
 const loading = ref(true);
 const typeData = ref([]);
+const statusData = ref([]);
 
 onMounted(() => {
   getDictList();
   getDictType();
+  getDictTypeStatus();
 });
 
 //获取字典类型分页数据
@@ -152,6 +155,15 @@ const getDictType = () => {
   queryAllTypeData().then((res) => {
     if (res.code === 200) {
       typeData.value = res.data;
+    }
+  })
+}
+
+//查询字典状态
+const getDictTypeStatus = () => {
+  queryDictLabel(DICT_TYPE_CONSTANT).then((res) => {
+    if (res.code === 200) {
+      statusData.value = res.data;
     }
   })
 }

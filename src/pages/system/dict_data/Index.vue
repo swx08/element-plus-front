@@ -16,8 +16,7 @@
           <el-col :lg="8">
             <span>状态：</span>
             <el-select v-model="searchDict.status" placeholder="状态" style="width: 200px">
-              <el-option label="开启" :value="1"></el-option>
-              <el-option label="关闭" :value="0"></el-option>
+              <el-option v-for="(item, index) in statusData" :key="index" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
         </el-row>
@@ -111,11 +110,11 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { addDictData, updateDict,findDictList, updateDictStatus, removeDict, echoDict, } from "@/api/dict_data";
+import { addDictData, updateDict, findDictList, updateDictStatus, removeDict, echoDict, queryDictLabel } from "@/api/dict_data";
 import { ElMessage } from "element-plus";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
-import router from "@/router";
-import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router';
+import { DICT_DATA_CONSTANT } from "@/constant/dictType.js";
 
 //表格数据
 const route = useRoute();
@@ -135,11 +134,12 @@ const dictData = ref({
 const dictDataErr = ref({});
 const saveLoading = ref(false);
 const loading = ref(true);
-const typeData = ref([]);
+const statusData = ref([]);
 searchDict.value.type = route.query.type;
 
 onMounted(() => {
   getDictList();
+  getDictTypeStatus();
 });
 
 //获取字典类型分页数据
@@ -163,6 +163,15 @@ const handlePaginationChange = (current, page) => {
   getDictList();
 }
 
+//查询字典状态
+const getDictTypeStatus = () => {
+  queryDictLabel(DICT_DATA_CONSTANT).then((res) => {
+    if (res.code === 200) {
+      statusData.value = res.data;
+    }
+  })
+}
+
 //重置
 const handleReset = () => {
   searchDict.value = {
@@ -175,7 +184,7 @@ const handleReset = () => {
 
 //查询
 const handleSearch = () => {
-  if ((searchDict.value.name !== "") || (searchDict.value.type !== "") || (searchDict.value.status !== null)) {
+  if ((searchDict.value.label !== "") || (searchDict.value.type !== "") || (searchDict.value.status !== null)) {
     saveLoading.value = true;
     getDictList();
     saveLoading.value = false;
@@ -188,8 +197,8 @@ const handlerAddDictOpen = () => {
   addDictOpen.value = true;
 }
 const handlerCancel = () => {
-  dictData.value = {};
   addDictOpen.value = false;
+  dictData.value = {};
 }
 
 //处理保存字典的操作
@@ -200,6 +209,7 @@ const handleSaveDict = () => {
       if (dictData.value.id === undefined) {
         addDictData(dictData.value).then((res) => {
           if (res.code === 200) {
+            saveLoading.value = false;
             ElMessage({
               type: 'success',
               message: '新增成功！'
@@ -208,12 +218,16 @@ const handleSaveDict = () => {
             addDictOpen.value = false;
             dictData.value = {};
           } else {
-            dictDataErr.value = res.data;
+            saveLoading.value = false;
+            if (res.data !== null) {
+              dictDataErr.value = res.data;
+            }
           }
         });
       } else {
         updateDict(dictData.value).then((res) => {
           if (res.code === 200) {
+            saveLoading.value = false;
             ElMessage({
               type: 'success',
               message: '修改成功！'
@@ -257,11 +271,6 @@ const handleRemoveDict = (id) => {
       getDictList();
     }
   })
-}
-
-//跳转到字典数据页面
-const goToDictData = (item) => {
-  router.push({ name: 'DictData', query: { item: item } });
 }
 
 //修改字典数据回显

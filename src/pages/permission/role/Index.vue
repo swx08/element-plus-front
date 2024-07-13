@@ -14,10 +14,9 @@
             <el-input style="width: 200px" v-model="searchRole.code" placeholder="角色标识"></el-input>
           </el-col>
           <el-col :lg="8">
-            <span>角色状态：</span>
-            <el-select v-model="searchRole.status" placeholder="角色状态" style="width: 200px">
-              <el-option label="开启" :value="1">开启</el-option>
-              <el-option label="关闭" :value="0">关闭</el-option>
+            <span>状态：</span>
+            <el-select v-model="searchRole.status" placeholder="状态" style="width: 200px">
+              <el-option v-for="(item, index) in statusData" :key="index" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
         </el-row>
@@ -117,6 +116,8 @@ import { findRoleList, addRole, savePermission, echoRole, updateRole, removeRole
 import { queryMenuList, queryRoleMenuList } from "@/api/menu";
 import { Lock, Edit, Delete, Check, Close, CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import { queryDictLabel } from "@/api/dict_data";
+import { ROLE_CONSTANT } from "@/constant/dictType.js";
 
 //表格数据
 const tableData = ref([]);
@@ -147,9 +148,11 @@ const roleName = ref("");
 //收集角色表单内容
 const role = ref({});
 const roleId = ref(null);
+const statusData = ref([]);
 
 onMounted(() => {
   getRoleList();
+  getDictTypeStatus();
 });
 
 //获取用户分页数据
@@ -170,6 +173,15 @@ const handlePaginationChange = (current, page) => {
   pageNo.value = current;
   pageSize.value = page;
   getRoleList();
+}
+
+//查询字典状态
+const getDictTypeStatus = () => {
+  queryDictLabel(ROLE_CONSTANT).then((res) => {
+    if (res.code === 200) {
+      statusData.value = res.data;
+    }
+  })
 }
 
 //重置
